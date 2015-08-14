@@ -11,7 +11,7 @@ void onIndex(HttpRequest &request, HttpResponse &response)
 {
 	TemplateFileStream *tmpl = new TemplateFileStream("index.html");
 	auto &vars = tmpl->variables();
-	vars["Time"] = String(counter);
+	vars["Counter"] = String(counter);
 	response.sendTemplate(tmpl);
 }
 
@@ -80,11 +80,11 @@ void onFile(HttpRequest &request, HttpResponse &response)
 
 void onAJAXGetState(HttpRequest &request, HttpResponse &response)
 {
-//	JsonObjectStream* stream = new JsonObjectStream();
-//	JsonObject& json = stream->getRoot();
+	JsonObjectStream* stream = new JsonObjectStream();
+	JsonObject& json = stream->getRoot();
 //	JsonArray& sensors = json.createNestedArray("sensors");
 //
-//	json["counter"] = counter;
+	json["counter"] = counter;
 //	for (byte n = 0; n < NUM_SENSORS; n++)
 //	{
 //		JsonObject& sensor = sensors.createNestedObject();
@@ -93,7 +93,7 @@ void onAJAXGetState(HttpRequest &request, HttpResponse &response)
 //		sensor["state"] = relay_pins[n].state;
 //	}
 //
-//	response.sendJsonObject(stream);
+	response.sendJsonObject(stream);
 }
 
 

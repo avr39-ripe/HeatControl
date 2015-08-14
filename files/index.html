@@ -25,16 +25,7 @@
 			
 			(function worker() {
 				$.getJSON('/state', function(data) {
-					for(var i = 0; i < data.sensors.length; i++)
-						{
-							$('#' + data.sensors[i].name + '-val').html(data.sensors[i].temp + ' &deg;C');
-							if (data.sensors[i].state)
-								$('#' + data.sensors[i].name + '-panel').removeClass("panel-default").addClass("panel-danger");
-							else
-								$('#' + data.sensors[i].name + '-panel').removeClass("panel-danger").addClass("panel-default");
-						}
 					$('#counter').html(data.counter);
-
 					setTimeout(worker, 2000);
 				});
 			})();
@@ -50,7 +41,7 @@
             <li role="presentation"><a href="/config">Configuration</a></li>
           </ul>
         </nav>
-        <h3 class="text-muted">ValveControl</h3>
+        <h3 class="text-muted">HeatControl</h3>
       </div>
 	  
 	  <div class="row">
@@ -62,40 +53,11 @@
 				  <h3 class="panel-title">Counter</h3>
 				</div>
 				<div class="panel-body">
-				  <h1 id="counter" class="text-center main">{Time}</h1>
+				  <h1 id="counter" class="text-center main">{Counter}</h1>
 				</div>
 			  </div>
 			</div>
-			<div class="col-xs-10 col-md-5">
-			  <div id="Sensor1-panel" class="panel panel-default">
-				<div class="panel-heading">
-				  <h3 id="Sensor1-header" class="panel-title">Temperature Sensor1</h3>
-				</div>
-				<div class="panel-body">
-				  <h1 id="Sensor1-val" class="text-center main">{Temp} &deg;C</h1>
-				</div>
-			  </div>
-			</div>
-				<div class="col-xs-10 col-md-5">
-			  <div id="Sensor2-panel" class="panel panel-default">
-				<div class="panel-heading">
-				  <h3 id="Sensor2-header" class="panel-title">Temperature Sensor2</h3>
-				</div>
-				<div class="panel-body">
-				  <h1 id="Sensor2-val" class="text-center main">{Temp} &deg;C</h1>
-				</div>
-			  </div>
-			</div>
-				<div class="col-xs-10 col-md-5">
-			  <div id="Sensor3-panel" class="panel panel-default">
-				<div class="panel-heading">
-				  <h3 id="Sensor3-header" class="panel-title">Temperature Sensor3</h3>
-				</div>
-				<div class="panel-body">
-				  <h1 id="Sensor3-val" class="text-center main">{Temp} &deg;C</h1>
-				</div>
-			  </div>
-			</div>
+
 			<!-- /col -->
 		</div>
       </div>

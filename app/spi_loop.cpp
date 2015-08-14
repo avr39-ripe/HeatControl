@@ -3,78 +3,10 @@
 #include "../include/heatcontrol.h"
 #include <SPI.h>
 
-//const int miso_pin = 12; // Connect Pin 11 to SER_OUT (serial data out)
-
-//const byte reg_in_latch = 4;
-//const byte reg_out_latch = 5;
-
-//const byte num_ch = 16;
-//const byte num_reg = num_ch / 8;
-//
-//typedef union {
-//  uint32_t word;
-//  uint8_t bytes[4];
-//} TYPE_32BIT;
-
 TYPE_32BIT out_reg;
-
 TYPE_32BIT in_reg;
 
-//struct inPin {
-//  bool _mode;  //HIGH == pressed (1) or LOW == pressed (0)
-//
-//  bool _lastState;
-//  bool _currentState;
-//
-//  bool _debounced;
-//  bool _lastDebouncedState;
-//  bool _currentDebouncedState;
-//  unsigned long int _debounceTimerStartTime;
-//  unsigned int _debounceDelay;
-//
-//  bool _pressed;
-//  bool _released;
-//
-//  bool _changed;
-//  bool _justPressed;
-//  bool _justReleased;
-//
-//  unsigned long int _currentTime;
-//};
-//
-
 inPin inPins[num_ch];
-
-//void debouncePin(byte pin);
-//void setupPin(byte pin, unsigned int debounceDelay, bool mode);
-//
-//void print_byte(byte val);
-
-
-//void init()
-//{
-//	Serial.begin(SERIAL_BAUD_RATE); // 115200 by default
-//	Serial.systemDebugOutput(false); // Allow debug output to serial
-//
-//
-//	Serial.println("Sming start");
-//
-////initial out_reg state
-////  out_reg.word = 4294967295L;
-////	out_reg.word = 43690;
-////	out_reg.word = 21845L;
-//
-////  for(int i = 0; i < num_ch; i++)
-////  {
-////    setupPin(i, 100, LOW);
-////  }
-////
-////  pinMode(reg_in_latch, OUTPUT);
-////  pinMode(reg_out_latch, OUTPUT);
-//
-//
-//}
-
 
 void SPI_loop()
 {
