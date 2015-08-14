@@ -1,1 +1,4 @@
 out/
+.settings/
+.cproject
+.project
