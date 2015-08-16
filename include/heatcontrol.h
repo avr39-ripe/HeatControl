@@ -10,14 +10,9 @@ const byte reg_out_latch = 5;
 const byte num_ch = 16;
 const byte num_reg = num_ch / 8;
 
-typedef union {
-  uint32_t word;
-  uint8_t bytes[4];
-} TYPE_32BIT;
+extern uint8_t out_reg[num_reg];
 
-extern TYPE_32BIT out_reg;
-
-extern TYPE_32BIT in_reg;
+extern uint8_t in_reg[num_reg];
 
 struct inPin {
   bool _mode;  //HIGH == pressed (1) or LOW == pressed (0)

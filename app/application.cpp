@@ -37,7 +37,6 @@ void init()
 	WifiAccessPoint.enable(true);
 	startWebServer();
 //SPI_loop init
-	out_reg.word = 4294967295L;
 
 	for(int i = 0; i < num_ch; i++)
 	{

@@ -3,8 +3,8 @@
 #include "../include/heatcontrol.h"
 #include <SPI.h>
 
-TYPE_32BIT out_reg;
-TYPE_32BIT in_reg;
+uint8_t out_reg[num_reg] = {255,255};
+uint8_t in_reg[num_reg];
 
 inPin inPins[num_ch];
 
@@ -32,20 +32,20 @@ for(int cnt = 0; cnt < 4; cnt++)
 
   for(int i = 0; i < num_reg; i++)
   {
-    in_reg.bytes[i] = SPI.transfer(out_reg.bytes[num_reg - 1 - i]);
+    in_reg[i] = SPI.transfer(out_reg[num_reg - 1 - i]);
   }
 
   digitalWrite(reg_out_latch, HIGH);
 
-  in_reg.bytes[1] = (in_reg.bytes[1] >> 1) | ((in_reg.bytes[0] & 1) << 7); //re-arrange bits in place
-  in_reg.bytes[0] = (in_reg.bytes[0] >> 1) | (first_bit << 7); //here we use our stored first bit
+  in_reg[1] = (in_reg[1] >> 1) | ((in_reg[0] & 1) << 7); //re-arrange bits in place
+  in_reg[0] = (in_reg[0] >> 1) | (first_bit << 7); //here we use our stored first bit
 
 //  for(int i = 0; i < num_reg; i++)
 //  {
 //    Serial.print("REG-IN"); Serial.print(i);Serial.print(" ");
-//    print_byte(in_reg.bytes[i]);
+//    print_byte(in_reg[i]);
 //    Serial.print("REG-OUT"); Serial.print(i);Serial.print(" ");
-//    print_byte(out_reg.bytes[i]);
+//    print_byte(out_reg[i]);
 //  }
 
 for(int i = 0; i < num_ch; i++)
@@ -57,7 +57,7 @@ for(int i = 0; i < num_ch; i++)
     if ( inPins[i]._changed && inPins[i]._pressed) {
            byteIndex = i / 8;
            shiftIndex = i % 8;
-           out_reg.bytes[byteIndex] ^= (1 << shiftIndex);
+           out_reg[byteIndex] ^= (1 << shiftIndex);
          }
      }
 }
@@ -92,7 +92,7 @@ void debouncePin(byte pin)
   byte bitId = pin % 8;
   unsigned long int _currentTime = millis();
   
-  inPins[pin]._currentState = in_reg.bytes[byteId] & (1 << bitId);
+  inPins[pin]._currentState = in_reg[byteId] & (1 << bitId);
   
   if (inPins[pin]._currentState != inPins[pin]._lastState) {
     inPins[pin]._debounced = false;
