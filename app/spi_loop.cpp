@@ -11,8 +11,8 @@ inPin inPins[num_ch];
 void SPI_loop()
 {
 	counter++;
-for(int cnt = 0; cnt < 4; cnt++)
-{
+//for(int cnt = 0; cnt < 4; cnt++)
+//{
   uint8_t first_bit;
   int byteIndex;
   int shiftIndex;
@@ -48,21 +48,26 @@ for(int cnt = 0; cnt < 4; cnt++)
 //    print_byte(out_reg[i]);
 //  }
 
-for(int i = 0; i < num_ch; i++)
-  {
-    debouncePin(i);
-     switch (i) {
+    for(int i = 0; i < num_reg; i++)
+    {
+    	out_reg[i] = in_reg[i];
+    }
 
-     default:  
-    if ( inPins[i]._changed && inPins[i]._pressed) {
-           byteIndex = i / 8;
-           shiftIndex = i % 8;
-           out_reg[byteIndex] ^= (1 << shiftIndex);
-         }
-     }
-}
+//for(int i = 0; i < num_ch; i++)
+//  {
+//    debouncePin(i);
+//     switch (i) {
+//
+//     default:
+//    if ( inPins[i]._changed && inPins[i]._pressed) {
+//           byteIndex = i / 8;
+//           shiftIndex = i % 8;
+//           out_reg[byteIndex] ^= (1 << shiftIndex);
+//         }
+//     }
+//}
 
-} //cnt loop
+//} //cnt loop
 }
 
 void setupPin(byte pin, unsigned int debounceDelay, bool mode)
