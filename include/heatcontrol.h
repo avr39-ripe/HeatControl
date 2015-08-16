@@ -46,9 +46,9 @@ extern inPin inPins[num_ch];
 
 extern unsigned long counter;
 
-#endif /* INCLUDE_HEATCONTROL_H_ */
-
 void debouncePin(byte pin);
 void setupPin(byte pin, unsigned int debounceDelay, bool mode);
 void print_byte(byte val);
 void SPI_loop();
+
+#endif /* INCLUDE_HEATCONTROL_H_ */
