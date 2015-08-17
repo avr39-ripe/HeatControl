@@ -14,8 +14,8 @@ void SPI_loop()
 //for(int cnt = 0; cnt < 4; cnt++)
 //{
   uint8_t first_bit;
-  uint8_t regIndex;
-  uint8_t bitIndex;
+  int regIndex;
+  int bitIndex;
   
   digitalWrite(reg_in_latch, LOW);
   
@@ -58,7 +58,7 @@ for(int i = 0; i < num_ch; i++)
 	regIndex = i >> 3;
 	bitIndex = i ^ regIndex << 3;
 
-	if(in_reg[regIndex] & (1 << bitIndex) != 0)
+	if((in_reg[regIndex] & (1 << bitIndex)) == 0)
 	{
 		out_reg[regIndex] &= ~(1 << bitIndex);
 	}
