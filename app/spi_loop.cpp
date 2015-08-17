@@ -52,90 +52,17 @@ void SPI_loop()
     	if ((getState(in_reg,i) && (getState(in_reg_prev, i) == false)))
     	{
     		setState(in_reg_prev, i, true);
-    		setState(out_reg, i, true);
+    		setState(out_reg, i, !getState(out_reg,i));
     		Serial.print("On ch "); Serial.println(i);
     	}
 
     	if (((getState(in_reg,i) == false) && (getState(in_reg_prev, i))))
 		{
 			setState(in_reg_prev, i, false);
-			setState(out_reg, i, false);
+			//setState(out_reg, i, false);
 			Serial.print("Off ch "); Serial.println(i);
 		}
-//    	setState(out_reg, i, getState(in_reg,i));
     }
-
-//for(int i = 0; i < num_ch; i++)
-//  {
-//	regIndex = i >> 3;
-//	bitIndex = i ^ regIndex << 3;
-//
-//	if((in_reg[regIndex] & (1 << bitIndex)) == 0)
-//	{
-//		out_reg[regIndex] &= ~(1 << bitIndex);
-//	}
-//	else
-//	{
-//		out_reg[regIndex] |= (1 << bitIndex);
-//	}
-//    debouncePin(i);
-//     switch (i) {
-//
-//     default:
-//    if ( inPins[i]._changed && inPins[i]._pressed) {
-//           byteIndex = i / 8;
-//           shiftIndex = i % 8;
-//           out_reg[byteIndex] ^= (1 << shiftIndex);
-//         }
-//     }
-//}
-
-//} //cnt loop
-}
-
-bool inState(int ch)
-{
-	int regIndex = ch >> 3;
-	int bitIndex = ch ^ regIndex << 3;
-
-		if((in_reg[regIndex] & (1 << bitIndex)) == 0)
-		{
-			return true; //Active LOW
-		}
-		else
-		{
-			return false;
-		}
-}
-
-void outSetState(int ch, uint8_t state)
-{
-	int regIndex = ch >> 3;
-	int bitIndex = ch ^ regIndex << 3;
-
-	if (state == 1)
-	{
-		out_reg[regIndex] &= ~(1 << bitIndex); //Active LOW
-	}
-	else
-	{
-		out_reg[regIndex] |= (1 << bitIndex);
-	}
-}
-
-bool outGetState(int ch)
-{
-	int regIndex = ch >> 3;
-	int bitIndex = ch ^ regIndex << 3;
-
-	if((out_reg[regIndex] & (1 << bitIndex)) == 0)
-	{
-		return true; //Active LOW
-	}
-	else
-	{
-		return false;
-	}
 }
 
 bool getState(uint8_t * reg, int ch)

@@ -12,6 +12,7 @@ const byte num_reg = num_ch / 8;
 
 extern uint8_t out_reg[num_reg];
 extern uint8_t in_reg[num_reg];
+extern uint8_t in_reg_prev[num_reg];
 
 extern unsigned long counter;
 
@@ -20,9 +21,5 @@ void SPI_loop();
 
 void setState(uint8_t * reg, int ch, uint8_t state);
 bool getState(uint8_t * reg, int ch);
-
-bool inState(int ch);
-void outSetState(int ch, uint8_t state);
-bool outGetState(int ch);
 
 #endif /* INCLUDE_HEATCONTROL_H_ */
