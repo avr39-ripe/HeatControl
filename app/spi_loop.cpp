@@ -49,18 +49,20 @@ void SPI_loop()
 
     for(int i = 0; i < num_ch; i++)
     {
-    	if (getState(in_reg,i) && !(getState(in_reg_prev, i)))
+    	if ((getState(in_reg,i) && (getState(in_reg_prev, i) == false)))
     	{
     		setState(in_reg_prev, i, true);
-    		setState(out_reg, i, ~(getState(out_reg, i)));
+    		setState(out_reg, i, true);
+    		Serial.print("On ch "); Serial.println(i);
     	}
 
-    	if (!(getState(in_reg,i)) && (getState(in_reg_prev, i)))
+    	if (((getState(in_reg,i) == false) && (getState(in_reg_prev, i))))
 		{
 			setState(in_reg_prev, i, false);
-//			setState(out_reg, i, ~(getState(out_reg, i)));
+			setState(out_reg, i, false);
+			Serial.print("Off ch "); Serial.println(i);
 		}
-
+//    	setState(out_reg, i, getState(in_reg,i));
     }
 
 //for(int i = 0; i < num_ch; i++)
