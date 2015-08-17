@@ -14,6 +14,14 @@ extern uint8_t out_reg[num_reg];
 extern uint8_t in_reg[num_reg];
 extern uint8_t in_reg_prev[num_reg];
 
+enum pinStates {
+	RELEASED		= (1u << 0),
+	PRESSED			= (1u << 1),
+	JUSTRELEASED	= (1u << 2),
+	JUSTPRESSED		= (1u << 3),
+	CHANGED			= (1u << 4)
+};
+
 extern unsigned long counter;
 
 void print_byte(byte val);
@@ -21,5 +29,6 @@ void SPI_loop();
 
 void setState(uint8_t * reg, int ch, uint8_t state);
 bool getState(uint8_t * reg, int ch);
+int pinState(int ch);
 
 #endif /* INCLUDE_HEATCONTROL_H_ */

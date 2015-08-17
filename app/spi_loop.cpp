@@ -49,19 +49,30 @@ void SPI_loop()
 
     for(int i = 0; i < num_ch; i++)
     {
-    	if ((getState(in_reg,i) && (getState(in_reg_prev, i) == false)))
+    	int curr_state = pinState(i);
+    	if (curr_state & JUSTPRESSED)
     	{
-    		setState(in_reg_prev, i, true);
     		setState(out_reg, i, !getState(out_reg,i));
-    		Serial.print("On ch "); Serial.println(i);
+    		Serial.print("ON ch "); Serial.println(i);
     	}
 
-    	if (((getState(in_reg,i) == false) && (getState(in_reg_prev, i))))
+    	if (curr_state & JUSTRELEASED)
 		{
-			setState(in_reg_prev, i, false);
-			//setState(out_reg, i, false);
-			Serial.print("Off ch "); Serial.println(i);
+			Serial.print("OFF ch "); Serial.println(i);
 		}
+//    	if ((getState(in_reg,i) && (getState(in_reg_prev, i) == false)))
+//    	{
+//    		setState(in_reg_prev, i, true);
+//    		setState(out_reg, i, !getState(out_reg,i));
+//    		Serial.print("On ch "); Serial.println(i);
+//    	}
+//
+//    	if (((getState(in_reg,i) == false) && (getState(in_reg_prev, i))))
+//		{
+//			setState(in_reg_prev, i, false);
+//			//setState(out_reg, i, false);
+//			Serial.print("Off ch "); Serial.println(i);
+//		}
     }
 }
 
@@ -93,6 +104,25 @@ void setState(uint8_t * reg, int ch, uint8_t state)
 	{
 		reg[regIndex] |= (1 << bitIndex);
 	}
+}
+
+int pinState(int ch)
+{
+	if ((getState(in_reg, ch) && (getState(in_reg_prev, ch) == false)))
+	{
+		setState(in_reg_prev, ch, true);
+		return (PRESSED | JUSTPRESSED | CHANGED);
+	}
+	else if (getState(in_reg, ch))
+		return (PRESSED);
+
+	if (((getState(in_reg, ch) == false) && (getState(in_reg_prev, ch))))
+	{
+		setState(in_reg_prev, ch, false);
+		return (RELEASED | JUSTRELEASED | CHANGED);
+	}
+	else if (getState(in_reg, ch) == false)
+		return (RELEASED);
 }
 // A function that prints all the 1's and 0's of a byte, so 8 bits +or- 2
 void print_byte(byte val)
