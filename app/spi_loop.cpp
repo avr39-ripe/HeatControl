@@ -14,8 +14,8 @@ void SPI_loop()
 //for(int cnt = 0; cnt < 4; cnt++)
 //{
   uint8_t first_bit;
-  int byteIndex;
-  int shiftIndex;
+  uint8_t regIndex;
+  uint8_t bitIndex;
   
   digitalWrite(reg_in_latch, LOW);
   
@@ -48,13 +48,24 @@ void SPI_loop()
 //    print_byte(out_reg[i]);
 //  }
 
-    for(int i = 0; i < num_reg; i++)
-    {
-    	out_reg[i] = in_reg[i];
-    }
+//    for(int i = 0; i < num_reg; i++)
+//    {
+//    	out_reg[i] = in_reg[i];
+//    }
 
-//for(int i = 0; i < num_ch; i++)
-//  {
+for(int i = 0; i < num_ch; i++)
+  {
+	regIndex = i >> 3;
+	bitIndex = i ^ regIndex << 3;
+
+	if(in_reg[regIndex] & (1 << bitIndex) != 0)
+	{
+		out_reg[regIndex] &= ~(1 << bitIndex);
+	}
+	else
+	{
+		out_reg[regIndex] |= (1 << bitIndex);
+	}
 //    debouncePin(i);
 //     switch (i) {
 //
@@ -65,7 +76,7 @@ void SPI_loop()
 //           out_reg[byteIndex] ^= (1 << shiftIndex);
 //         }
 //     }
-//}
+}
 
 //} //cnt loop
 }
