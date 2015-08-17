@@ -5,8 +5,7 @@
 
 uint8_t out_reg[num_reg] = {255,255};
 uint8_t in_reg[num_reg];
-
-inPin inPins[num_ch];
+uint8_t in_reg_prev[num_reg] = {255,255};
 
 void SPI_loop()
 {
@@ -48,24 +47,24 @@ void SPI_loop()
 //    print_byte(out_reg[i]);
 //  }
 
-//    for(int i = 0; i < num_reg; i++)
-//    {
-//    	out_reg[i] = in_reg[i];
-//    }
+    for(int i = 0; i < num_ch; i++)
+    {
+    	setState(out_reg, i, getState(in_reg,i));
+    }
 
-for(int i = 0; i < num_ch; i++)
-  {
-	regIndex = i >> 3;
-	bitIndex = i ^ regIndex << 3;
-
-	if((in_reg[regIndex] & (1 << bitIndex)) == 0)
-	{
-		out_reg[regIndex] &= ~(1 << bitIndex);
-	}
-	else
-	{
-		out_reg[regIndex] |= (1 << bitIndex);
-	}
+//for(int i = 0; i < num_ch; i++)
+//  {
+//	regIndex = i >> 3;
+//	bitIndex = i ^ regIndex << 3;
+//
+//	if((in_reg[regIndex] & (1 << bitIndex)) == 0)
+//	{
+//		out_reg[regIndex] &= ~(1 << bitIndex);
+//	}
+//	else
+//	{
+//		out_reg[regIndex] |= (1 << bitIndex);
+//	}
 //    debouncePin(i);
 //     switch (i) {
 //
@@ -76,84 +75,85 @@ for(int i = 0; i < num_ch; i++)
 //           out_reg[byteIndex] ^= (1 << shiftIndex);
 //         }
 //     }
-}
+//}
 
 //} //cnt loop
 }
 
-void setupPin(byte pin, unsigned int debounceDelay, bool mode)
+bool inState(int ch)
 {
-  inPins[pin]._mode = mode;
-  inPins[pin]._lastState = 0;
-    inPins[pin]._currentState = 0;
-    
-    inPins[pin]._debounced = 1;
-    inPins[pin]._lastDebouncedState = 0;
-    inPins[pin]._currentDebouncedState = 0;
-    inPins[pin]._debounceTimerStartTime = 0;
-    inPins[pin]._debounceDelay = debounceDelay;
-    
-    inPins[pin]._pressed = 0;
-    inPins[pin]._released = 1;
-  
-    inPins[pin]._changed = 0;
-    inPins[pin]._justPressed = 0;
-    inPins[pin]._justReleased = 0;
-     
+	int regIndex = ch >> 3;
+	int bitIndex = ch ^ regIndex << 3;
+
+		if((in_reg[regIndex] & (1 << bitIndex)) == 0)
+		{
+			return true; //Active LOW
+		}
+		else
+		{
+			return false;
+		}
 }
 
-void debouncePin(byte pin)
+void outSetState(int ch, uint8_t state)
 {
-  byte byteId = pin / 8; 
-  byte bitId = pin % 8;
-  unsigned long int _currentTime = millis();
-  
-  inPins[pin]._currentState = in_reg[byteId] & (1 << bitId);
-  
-  if (inPins[pin]._currentState != inPins[pin]._lastState) {
-    inPins[pin]._debounced = false;
-    inPins[pin]._debounceTimerStartTime = _currentTime;
-  } else if ((_currentTime - inPins[pin]._debounceTimerStartTime) > inPins[pin]._debounceDelay) {
-    inPins[pin]._debounced = true;
-  }
-  
-  if (inPins[pin]._debounced) {
-    inPins[pin]._lastDebouncedState = inPins[pin]._currentDebouncedState;
-    inPins[pin]._currentDebouncedState = inPins[pin]._currentState;
-  }
-  
-  
-  if (inPins[pin]._currentDebouncedState == inPins[pin]._mode) {
-    inPins[pin]._pressed = true;
-    inPins[pin]._released = false;
-    inPins[pin]._justReleased = false;
-  } else {
-    inPins[pin]._pressed = false;
-    inPins[pin]._released = true;
-    inPins[pin]._justPressed = false;
-  }
-  
-  
-  if (inPins[pin]._lastDebouncedState != inPins[pin]._currentDebouncedState) {
-    inPins[pin]._changed = true;
-  } else {
-    inPins[pin]._changed = false;
-    inPins[pin]._justPressed = false;
-    inPins[pin]._justReleased = false;
-  }
-  
-  if (inPins[pin]._changed && inPins[pin]._pressed) {
-    inPins[pin]._justPressed = true;
-    inPins[pin]._justReleased = false;
-  } else if(inPins[pin]._changed && inPins[pin]._released){
-    inPins[pin]._justPressed = false;
-    inPins[pin]._justReleased = true;
-    
-  } 
-  inPins[pin]._lastState = inPins[pin]._currentState;
+	int regIndex = ch >> 3;
+	int bitIndex = ch ^ regIndex << 3;
+
+	if (state == 1)
+	{
+		out_reg[regIndex] &= ~(1 << bitIndex); //Active LOW
+	}
+	else
+	{
+		out_reg[regIndex] |= (1 << bitIndex);
+	}
 }
 
+bool outGetState(int ch)
+{
+	int regIndex = ch >> 3;
+	int bitIndex = ch ^ regIndex << 3;
 
+	if((out_reg[regIndex] & (1 << bitIndex)) == 0)
+	{
+		return true; //Active LOW
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool getState(uint8_t * reg, int ch)
+{
+	int regIndex = ch >> 3;
+	int bitIndex = ch ^ regIndex << 3;
+
+	if((reg[regIndex] & (1 << bitIndex)) == 0)
+	{
+		return true; //Active LOW
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void setState(uint8_t * reg, int ch, uint8_t state)
+{
+	int regIndex = ch >> 3;
+	int bitIndex = ch ^ regIndex << 3;
+
+	if (state == 1)
+	{
+		reg[regIndex] &= ~(1 << bitIndex); //Active LOW
+	}
+	else
+	{
+		reg[regIndex] |= (1 << bitIndex);
+	}
+}
 // A function that prints all the 1's and 0's of a byte, so 8 bits +or- 2
 void print_byte(byte val)
 {

@@ -2,7 +2,7 @@
 #define INCLUDE_HEATCONTROL_H_
 
 //SPI_loop stuff
-const int miso_pin = 12; // Connect Pin 11 to SER_OUT (serial data out)
+const int miso_pin = 12; // 74hc165 data out
 
 const byte reg_in_latch = 4;
 const byte reg_out_latch = 5;
@@ -11,39 +11,18 @@ const byte num_ch = 16;
 const byte num_reg = num_ch / 8;
 
 extern uint8_t out_reg[num_reg];
-
 extern uint8_t in_reg[num_reg];
-
-struct inPin {
-  bool _mode;  //HIGH == pressed (1) or LOW == pressed (0)
-
-  bool _lastState;
-  bool _currentState;
-
-  bool _debounced;
-  bool _lastDebouncedState;
-  bool _currentDebouncedState;
-  unsigned long int _debounceTimerStartTime;
-  unsigned int _debounceDelay;
-
-  bool _pressed;
-  bool _released;
-
-  bool _changed;
-  bool _justPressed;
-  bool _justReleased;
-
-  unsigned long int _currentTime;
-};
-
-extern inPin inPins[num_ch];
-//SPI_loop stuff
 
 extern unsigned long counter;
 
-void debouncePin(byte pin);
-void setupPin(byte pin, unsigned int debounceDelay, bool mode);
 void print_byte(byte val);
 void SPI_loop();
+
+void setState(uint8_t * reg, int ch, uint8_t state);
+bool getState(uint8_t * reg, int ch);
+
+bool inState(int ch);
+void outSetState(int ch, uint8_t state);
+bool outGetState(int ch);
 
 #endif /* INCLUDE_HEATCONTROL_H_ */

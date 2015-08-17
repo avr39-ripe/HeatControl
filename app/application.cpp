@@ -36,13 +36,8 @@ void init()
 	WifiAccessPoint.config("HeatConfig", "", AUTH_OPEN);
 	WifiAccessPoint.enable(true);
 	startWebServer();
+
 //SPI_loop init
-
-	for(int i = 0; i < num_ch; i++)
-	{
-		setupPin(i, 100, LOW);
-	}
-
 	pinMode(reg_in_latch, OUTPUT);
 	pinMode(reg_out_latch, OUTPUT);
 
