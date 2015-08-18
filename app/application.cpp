@@ -2,8 +2,8 @@
 #include <SmingCore/SmingCore.h>
 #include <Libraries/OneWire/OneWire.h>
 
-#include "../include/configuration.h" // application configuration
-#include "../include/heatcontrol.h"
+#include <configuration.h> // application configuration
+#include <heatcontrol.h>
 
 #include "webserver.h"
 

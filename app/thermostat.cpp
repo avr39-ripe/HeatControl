@@ -1,7 +1,7 @@
 #include <user_config.h>
 #include <SmingCore/SmingCore.h>
-#include "../include/heatcontrol.h"
-#include "../include/thermostat.h"
+#include <heatcontrol.h>
+#include <thermostat.h>
 
 //Room implementation
 
@@ -21,7 +21,12 @@ void Room::run()
 	{
 		if (HeatingSystem::mode == WARMY)
 		{
-			;
+			setState(out_reg, _low_t_control_pin, true);
+		}
+		else if (HeatingSystem::mode == COLDY)
+		{
+			setState(out_reg, _low_t_control_pin, true);
+			setState(out_reg, _hi_t_control_pin, true);
 		}
 	}
 
@@ -36,6 +41,35 @@ Pump::Pump(uint8_t pump_pin, uint8_t pump_on_delay)
 {
 	this->_pump_pin = pump_pin;
 	this->_pump_on_delay = pump_on_delay;
+	this->pumpTimer.initializeMs(_pump_on_delay * 1000, TimerDelegate(&Pump::turn_on_delayed, this));
+}
+
+void Pump::turn_on()
+{
+	if (_consumers == 0)
+	{
+		_consumers++;
+		pumpTimer.start(false);
+	}
+	else
+		_consumers++;
+
+
+}
+
+void Pump::turn_off()
+{
+	_consumers--;
+	if (_consumers == 0)
+	{
+		setState(out_reg, _pump_pin, false);
+	}
+
+}
+
+void Pump::turn_on_delayed()
+{
+	setState(out_reg, _pump_pin, true);
 }
 
 //HeatingSystem implementation

@@ -1,1 +1,4 @@
-- restore CORRECT state after power failure. Need to re-read thermostats, and react on its state properly. To do so, we need some flag in SPI_loop not to check for _changed , but only to _pressed in_pins.
+1. WE need delayed pump off!
+2. we ned to check fo NO_PIN!!!
+3. when WARMY and only hi_temp_pin turn it on!!!
+

@@ -1,6 +1,6 @@
 #include <user_config.h>
 #include <SmingCore/SmingCore.h>
-#include "../include/heatcontrol.h"
+#include <heatcontrol.h>
 
 #include <SPI.h>
 
