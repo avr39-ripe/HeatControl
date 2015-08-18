@@ -1,6 +1,7 @@
 #include <user_config.h>
 #include <SmingCore/SmingCore.h>
 #include "../include/heatcontrol.h"
+
 #include <SPI.h>
 
 uint8_t out_reg[num_reg] = {255,255};
