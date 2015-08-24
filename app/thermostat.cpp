@@ -107,6 +107,7 @@ void HeatingSystem::caldron_turn_off()
 	if (_caldron_consumers == 0)
 	{
 		setState(out_reg, _caldron_pin, false);
+		this->_caldronTimer.stop();
 	}
 
 }
