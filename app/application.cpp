@@ -4,10 +4,12 @@
 
 #include <configuration.h> // application configuration
 #include <heatcontrol.h>
+#include <thermostat.h>
 
 #include "webserver.h"
 
 Timer SPITimer;
+Timer HSystemTimer;
 
 bool web_ap_started = false;
 
@@ -15,6 +17,7 @@ unsigned long counter = 0;
 
 void connectOk();
 void connectFail();
+void HSystem_loop();
 
 void init()
 {
@@ -42,6 +45,15 @@ void init()
 	pinMode(reg_out_latch, OUTPUT);
 
 	SPITimer.initializeMs(200, SPI_loop).start();
+
+//HSystem.check() timer
+//	HSystem.check();
+	HSystemTimer.initializeMs(2000, HSystem_loop).start();
+}
+
+void HSystem_loop()
+{
+	HSystem.check();
 }
 
 void connectOk()

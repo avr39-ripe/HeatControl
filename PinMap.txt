@@ -1,0 +1,30 @@
+esp8266
+0 - 1Wire thermometer
+12,13,14 - SPI
+
+Shift-out 74hc595
+
+9 - Caldron
+10 - PUMP_1
+11 - PUMP_2
+
+0 - room 1
+1 - room 2
+2 - room 3
+3 - room 4
+4 - room 5
+5 - room 6
+6 - room 7
+7 - room 8
+8 - room 9
+
+Shift-in 74hc165
+0 - room 1
+1 - room 2
+2 - room 3
+3 - room 4
+4 - room 5
+5 - room 6
+6 - room 7
+7 - room 8
+8 - room 9

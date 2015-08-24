@@ -2,6 +2,7 @@
 #define INCLUDE_THERMOSTAT_H_
 
 const uint8_t numRooms = 9;
+const uint16_t defaultDelay = 240; //4 * 60 - 4 minutes
 
 //HeatingSystem modes
 enum HeatingSystemModes { GAS = 0u, WOOD = 1u };
@@ -20,7 +21,7 @@ struct Room
 class Pump
 {
 public:
-	Pump(uint8_t pump_pin, uint16_t pump_on_delay, uint16_t pump_off_delay);
+	Pump(uint8_t pump_pin);
 	void turn_on();
 	void turn_off();
 	uint16_t _pump_on_delay;
@@ -37,7 +38,8 @@ private:
 class HeatingSystem
 {
 public:
-	HeatingSystem(uint8_t mode_pin, uint8_t caldron_pin, uint16_t caldron_on_delay);
+	HeatingSystem(uint8_t mode_pin, uint8_t caldron_pin);
+	~HeatingSystem();
 	void caldron_turn_on();
 	void caldron_turn_off();
 	void check_room(uint8_t room_id);
@@ -59,4 +61,5 @@ private:
 	Pump* _pumps[2];
 };
 
+extern HeatingSystem HSystem;
 #endif /* INCLUDE_THERMOSTAT_H_ */

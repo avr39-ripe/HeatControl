@@ -5,11 +5,12 @@
 
 //Pump implementation
 
-Pump::Pump(uint8_t pump_pin, uint16_t pump_on_delay, uint16_t pump_off_delay)
+Pump::Pump(uint8_t pump_pin)
 {
 	this->_pump_pin = pump_pin;
-	this->_pump_on_delay = pump_on_delay;
-	this->_pump_off_delay = pump_off_delay;
+	this->_consumers = 0;
+	this->_pump_on_delay = defaultDelay;
+	this->_pump_off_delay = defaultDelay;
 }
 
 void Pump::turn_on()
@@ -45,14 +46,45 @@ void Pump::turn_off_delayed()
 
 //HeatingSystem implementation
 
-HeatingSystem::HeatingSystem(uint8_t mode_pin, uint8_t caldron_pin, uint16_t caldron_on_delay)
+HeatingSystem::HeatingSystem(uint8_t mode_pin, uint8_t caldron_pin)
 {
 	this->_mode_pin = mode_pin;
+	this->_caldron_consumers = 0;
 	this->_caldron_pin = caldron_pin;
-	this->_caldron_on_delay = caldron_on_delay;
+	this->_caldron_on_delay = defaultDelay;
 	this->_mode = GAS;
 	this->_mode_switch_temp = 60;
 	this->_mode_switch_temp_delta = 1;
+	//pumps init
+	this->_pumps[0] = new Pump(10);
+	this->_pumps[1] = new Pump(11);
+	//rooms init
+	for(uint8_t id = 0; id < numRooms; id++)
+	{
+		this->_rooms[id] = new Room;
+		this->_rooms[id]->hi_t_control_pin = id;
+		this->_rooms[id]->thermostat_pin = id;
+	}
+	//assign each room corresponding pump_id
+	this->_rooms[0]->pump_id = PUMP_1;
+	this->_rooms[1]->pump_id = PUMP_1;
+	this->_rooms[2]->pump_id = PUMP_1;
+	this->_rooms[3]->pump_id = PUMP_1;
+	this->_rooms[4]->pump_id = PUMP_1;
+	this->_rooms[5]->pump_id = PUMP_2;
+	this->_rooms[6]->pump_id = PUMP_2;
+	this->_rooms[7]->pump_id = PUMP_2;
+	this->_rooms[8]->pump_id = PUMP_2;
+}
+
+HeatingSystem::~HeatingSystem()
+{
+	delete this->_pumps[0];
+	delete this->_pumps[1];
+	for(uint8_t id = 0; id < numRooms; id++)
+	{
+		delete this->_rooms[id];
+	}
 }
 
 void HeatingSystem::check_mode()
@@ -132,3 +164,6 @@ void HeatingSystem::check()
 		check_room(room_id);
 	}
 }
+
+//HeatingSystem initialisation
+HeatingSystem HSystem(0, 9);
