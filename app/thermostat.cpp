@@ -3,99 +3,13 @@
 #include <heatcontrol.h>
 #include <thermostat.h>
 
-
-void HeatingSystem::check_room(uint8_t room_id)
-{
-	int thermostat_state = pinState(_rooms[room_id]->thermostat_pin);
-
-	if ( thermostat_state & JUSTPRESSED)
-	{
-		if (_mode == WARMY)
-		{
-			setState(out_reg,_rooms[room_id]->low_t_control_pin, true);
-		}
-		else if (_mode == COLDY)
-		{
-			setState(out_reg, _rooms[room_id]->low_t_control_pin, true);
-			setState(out_reg, _rooms[room_id]->hi_t_control_pin, true);
-		}
-	}
-
-	if ( thermostat_state & JUSTRELEASED)
-	{
-		;
-	}
-}
-
-void HeatingSystem::room_turn_on(uint8_t room_id)
-{
-	if (_mode == WARMY && _rooms[room_id]->low_t_control_pin != NO_PIN) //room with lo_temp hot floor and MAY BE hi_temp heaters
-	{
-		setState(out_reg,_rooms[room_id]->low_t_control_pin, true);
-		_pumps[LOW_T_PUMP]->turn_on();
-		caldron_turn_on();
-	}
-	else if (_mode == WARMY && _rooms[room_id]->hi_t_control_pin != NO_PIN) //room with JUST hi_temp heater
-	{
-		setState(out_reg,_rooms[room_id]->hi_t_control_pin, true);
-		_pumps[HI_T_PUMP]->turn_on();
-		caldron_turn_on();
-	}
-
-	else if (_mode == COLDY)
-	{
-		if ( _rooms[room_id]->low_t_control_pin != NO_PIN)
-		{
-			setState(out_reg, _rooms[room_id]->low_t_control_pin, true);
-			_pumps[LOW_T_PUMP]->turn_on();
-			caldron_turn_on();
-		}
-		if (_rooms[room_id]->hi_t_control_pin != NO_PIN)
-		{
-			setState(out_reg, _rooms[room_id]->hi_t_control_pin, true);
-			_pumps[HI_T_PUMP]->turn_on();
-			caldron_turn_on();
-		}
-	}
-}
-
-void HeatingSystem::room_turn_off(uint8_t room_id)
-{
-	if (_mode == WARMY && _rooms[room_id]->low_t_control_pin != NO_PIN) //room with lo_temp hot floor and MAY BE hi_temp heaters
-	{
-		setState(out_reg,_rooms[room_id]->low_t_control_pin, false);
-		_pumps[LOW_T_PUMP]->turn_off();
-		caldron_turn_off();
-	}
-	else if (_mode == WARMY && _rooms[room_id]->hi_t_control_pin != NO_PIN) //room with JUST hi_temp heater
-	{
-		setState(out_reg,_rooms[room_id]->low_t_control_pin, false);
-		_pumps[HI_T_PUMP]->turn_off();
-		caldron_turn_off();
-	}
-
-	else if (_mode == COLDY)
-	{
-		if ( _rooms[room_id]->low_t_control_pin != NO_PIN)
-		{
-			this->_roomTimer.initializeMs(_room_coldy_lo_t_off_delay * 1000, myTimerDelegate(&HeatingSystem::_room_coldy_lo_t_off_delayed, this, room_id)).start(false);
-		}
-		if (_rooms[room_id]->hi_t_control_pin != NO_PIN)
-		{
-			setState(out_reg, _rooms[room_id]->hi_t_control_pin, false);
-			_pumps[HI_T_PUMP]->turn_off();
-			caldron_turn_off();
-		}
-	}
-}
-
 //Pump implementation
 
-Pump::Pump(uint8_t pump_pin, uint8_t pump_on_delay, uint8_t pump_off_delay)
+Pump::Pump(uint8_t pump_pin, uint16_t pump_on_delay, uint16_t pump_off_delay)
 {
 	this->_pump_pin = pump_pin;
 	this->_pump_on_delay = pump_on_delay;
-	this->_pump_on_delay = pump_off_delay;
+	this->_pump_off_delay = pump_off_delay;
 }
 
 void Pump::turn_on()
@@ -131,27 +45,19 @@ void Pump::turn_off_delayed()
 
 //HeatingSystem implementation
 
-HeatingSystem::HeatingSystem(uint8_t mode_pin, uint8_t caldron_pin, uint8_t caldron_on_delay, uint8_t _room_coldy_off_delay)
+HeatingSystem::HeatingSystem(uint8_t mode_pin, uint8_t caldron_pin, uint16_t caldron_on_delay)
 {
 	this->_mode_pin = mode_pin;
 	this->_caldron_pin = caldron_pin;
 	this->_caldron_on_delay = caldron_on_delay;
-	this->_mode = WARMY;
+	this->_mode = GAS;
+	this->_mode_switch_temp = 60;
+	this->_mode_switch_temp_delta = 1;
 }
 
 void HeatingSystem::check_mode()
 {
-	int mode_state = pinState(_mode_pin);
-
-		if ( mode_state & JUSTPRESSED)
-		{
-			_mode == COLDY; //Thermostat turns ON when there is too cold outside
-		}
-
-		if ( mode_state & JUSTRELEASED)
-		{
-			_mode == WARMY; //Thermostat turns OFF when there is too hot outside
-		}
+//TODO: implement mode chek by 1-wire thermometer
 }
 
 void HeatingSystem::caldron_turn_on()
@@ -178,9 +84,51 @@ void HeatingSystem::_caldron_turn_on_delayed()
 	setState(out_reg, _caldron_pin, true);
 }
 
-void HeatingSystem::_room_coldy_lo_t_off_delayed(uint8_t room_id)
+void HeatingSystem::room_turn_on(uint8_t room_id)
 {
-	setState(out_reg, _rooms[room_id]->low_t_control_pin, false);
-	_pumps[LOW_T_PUMP]->turn_off();
-	caldron_turn_off();
+	setState(out_reg, _rooms[room_id]->hi_t_control_pin, true);
+	_pumps[_rooms[room_id]->pump_id]->turn_on();
+	caldron_turn_on();
+}
+
+void HeatingSystem::room_turn_off(uint8_t room_id)
+{
+	if (_mode == GAS)
+	{
+		setState(out_reg,_rooms[room_id]->hi_t_control_pin, false);
+		_pumps[_rooms[room_id]->pump_id]->turn_off();
+		caldron_turn_off();
+	}
+}
+
+void HeatingSystem::check_room(uint8_t room_id)
+{
+	if (_mode == GAS)
+	{
+		int thermostat_state = pinState(_rooms[room_id]->thermostat_pin);
+
+		if (thermostat_state & JUSTPRESSED)
+		{
+			room_turn_on(room_id);
+		}
+
+		if (thermostat_state & JUSTRELEASED)
+		{
+			room_turn_off(room_id);
+		}
+	}
+	else
+	{
+		//To enshure that even after power fail, or reset or whatever - all rooms in WOOD mode are turned on
+		room_turn_on(room_id);
+	}
+}
+
+void HeatingSystem::check()
+{
+	check_mode();
+	for(uint8_t room_id = 0; room_id < numRooms; room_id ++)
+	{
+		check_room(room_id);
+	}
 }

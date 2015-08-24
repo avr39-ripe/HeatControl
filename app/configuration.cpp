@@ -2,12 +2,12 @@
 
 #include <SmingCore/SmingCore.h>
 
-ValveConfig ActiveConfig;
+HeatConfig ActiveConfig;
 
-ValveConfig loadConfig()
+HeatConfig loadConfig()
 {
 	DynamicJsonBuffer jsonBuffer;
-	ValveConfig cfg;
+	HeatConfig cfg;
 	if (fileExist(VALVE_CONFIG_FILE))
 	{
 		int size = fileGetSize(VALVE_CONFIG_FILE);
@@ -20,10 +20,11 @@ ValveConfig loadConfig()
 		cfg.NetworkPassword = String((const char*)network["password"]);
 
 		JsonObject& settings = root["settings"];
-		cfg.set_temp = settings["set_temp"];
-		cfg.temp_delta = settings["temp_delta"];
-		cfg.temp_interval = settings["temp_interval"];
-		cfg.switch_interval = settings["switch_interval"];
+		cfg.mode_switch_temp = settings["mode_switch_temp"];
+		cfg.mode_switch_temp_delta = settings["mode_switch_temp_delta"];
+		cfg.pump_on_delay = settings["pump_on_delay"];
+		cfg.pump_off_delay = settings["pump_off_delay"];
+		cfg.caldron_on_delay = settings["caldron_on_delay"];
 
 		delete[] jsonString;
 	}
@@ -32,15 +33,11 @@ ValveConfig loadConfig()
 		//Factory defaults if no config file present
 		cfg.NetworkSSID = WIFI_SSID;
 		cfg.NetworkPassword = WIFI_PWD;
-		cfg.set_temp = 20;
-		cfg.temp_delta = 0.5;
-		cfg.temp_interval = 20;
-		cfg.switch_interval = 3;
 	}
 	return cfg;
 }
 
-void saveConfig(ValveConfig& cfg)
+void saveConfig(HeatConfig& cfg)
 {
 	ActiveConfig = cfg;
 
@@ -54,10 +51,11 @@ void saveConfig(ValveConfig& cfg)
 
 	JsonObject& settings = jsonBuffer.createObject();
 	root["settings"] = settings;
-	settings["set_temp"] = cfg.set_temp;
-	settings["temp_delta"] = cfg.temp_delta;
-	settings["temp_interval"] = cfg.temp_interval;
-	settings["switch_interval"] = cfg.switch_interval;
+	settings["mode_switch_temp"] = cfg.mode_switch_temp;
+	settings["mode_switch_temp_delta"] = cfg.mode_switch_temp_delta;
+	settings["pump_on_delay"] = cfg.pump_on_delay;
+	settings["pump_off_delay"] = cfg.pump_off_delay;
+	settings["caldron_on_delay"] = cfg.caldron_on_delay;
 
 	char buf[3048];
 	root.prettyPrintTo(buf, sizeof(buf));

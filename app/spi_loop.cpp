@@ -2,7 +2,7 @@
 #include <SmingCore/SmingCore.h>
 #include <heatcontrol.h>
 
-#include <SPI.h>
+#include <SmingCore/SPI.h>
 
 uint8_t out_reg[num_reg] = {255,255};
 uint8_t in_reg[num_reg];

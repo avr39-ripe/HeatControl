@@ -8,32 +8,33 @@
 #define WIFI_SSID "infjust"
 #define WIFI_PWD "jujust12"
 
-#define ONEWIRE_PIN 4
+const char VALVE_CONFIG_FILE[] = ".heat.conf"; // leading point for security reasons :)
 
-#define VALVE_CONFIG_FILE ".valve.conf" // leading point for security reasons :)
-
-struct ValveConfig
+struct HeatConfig
 {
-	ValveConfig()
+	HeatConfig()
 	{
-		set_temp = 0;
-		temp_delta = 0;
-		temp_interval = 0;
-		switch_interval = 0;
+		mode_switch_temp = 60; //C degree
+		mode_switch_temp_delta = 1; //C dgree
+		pump_on_delay = 4 * 60; //seconds
+		pump_off_delay = 4 *60; //seconds
+		caldron_on_delay = 4 * 60; //seconds
 	}
 
 	String NetworkSSID;
 	String NetworkPassword;
-// ValveControl settings
-	float set_temp;
-	float temp_delta;
-	int temp_interval;
-	int switch_interval;
+
+// HeatControl settings
+	float mode_switch_temp;
+	float mode_switch_temp_delta;
+	uint16_t pump_on_delay;
+	uint16_t pump_off_delay;
+	uint16_t caldron_on_delay;
 };
 
-ValveConfig loadConfig();
-void saveConfig(ValveConfig& cfg);
+HeatConfig loadConfig();
+void saveConfig(HeatConfig& cfg);
 
-extern ValveConfig ActiveConfig;
+extern HeatConfig ActiveConfig;
 
 #endif /* INCLUDE_CONFIGURATION_H_ */

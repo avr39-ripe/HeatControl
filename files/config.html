@@ -60,29 +60,33 @@
 			  </div>
 			</div>
 			
-			<!-- ValveControl adjustment config -->
+			<!-- HeatControl adjustment config -->
 			<div>
 			  <div class="panel panel-default">
 				<div class="panel-heading">
-				  <h3 class="panel-title">ValveControl Settings</h3>
+				  <h3 class="panel-title">HeatControl Settings</h3>
 				</div>
 				<div class="panel-body">
 				  <form method="POST">
 					  <div class="form-group">
-						<label for="set_temp">Set temperature, &deg;C</label>
-						<input type="number" required class="form-control" min="20" max="40" step="0.5" id="set_temp" name="set_temp" value="{set_temp}">
+						<label for="mode_switch_temp">Set mode switch temperature, &deg;C</label>
+						<input type="number" required class="form-control" min="40" max="90" step="0.5" id="mode_switch_temp" name="mode_switch_temp" value="{mode_switch_temp}">
 					  </div>
 					  <div class="form-group">
-						<label for="temp_delta">Set temperature delta, &deg;C</label>
-						<input type="number" required class="form-control" min="0.5" max="5" step="0.5" id="temp_delta" name="temp_delta" value="{temp_delta}">
+						<label for="mode_switch_temp_delta">Set mode switch temperature delta, &deg;C</label>
+						<input type="number" required class="form-control" min="0.5" max="5" step="0.5" id="mode_switch_temp_delta" name="mode_switch_temp_delta" value="{mode_switch_temp_delta}">
 					  </div>
 					  <div class="form-group">
-						<label for="temp_interval">Temperature timeout, sec</label>
-						<input type="number" required class="form-control" min="20" max="60" step="1" id="temp_interval" name="temp_interval" value="{temp_interval}" sec>
+						<label for="pump_on_delay">Pump on delay, sec</label>
+						<input type="number" required class="form-control" min="60" max="600" step="1" id="pump_on_delay" name="pump_on_delay" value="{pump_on_delay}">
 					  </div>
 					  <div class="form-group">
-						<label for="switch_interval">Switch timeout, sec</label>
-						<input type="number" required class="form-control" min="3" max="20" step="1" id="switch_interval" name="switch_interval" value="{switch_interval}">
+						<label for="pump_off_delay">Pump off delay, sec</label>
+						<input type="number" required class="form-control" min="60" max="600" step="1" id="pump_off_delay" name="pump_off_delay" value="{pump_off_delay}">
+					  </div>
+					  <div class="form-group">
+						<label for="caldron_on_delay">Caldron on delay, sec</label>
+						<input type="number" required class="form-control" min="60" max="600" step="1" id="caldron_on_delay" name="caldron_on_delay" value="{caldron_on_delay}">
 					  </div>
 					  <button type="submit" class="btn btn-success">Save settings</button>
 					  <button type="cancel" class="btn btn-link">Cancel</button>

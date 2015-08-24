@@ -17,23 +17,24 @@ void onIndex(HttpRequest &request, HttpResponse &response)
 
 void onConfiguration(HttpRequest &request, HttpResponse &response)
 {
-////	ValveConfig cfg = loadConfig();
-//	if (request.getRequestMethod() == RequestMethod::POST)
-//	{
-//		debugf("Update config");
-//		// Update config
-//		if (request.getPostParameter("SSID").length() > 0) // Network
-//		{
-//			ActiveConfig.NetworkSSID = request.getPostParameter("SSID");
-//			ActiveConfig.NetworkPassword = request.getPostParameter("Password");
-//		}
-//		if (request.getPostParameter("set_temp").length() > 0) // Settings
-//		{
-//			ActiveConfig.set_temp = request.getPostParameter("set_temp").toFloat();
-//			ActiveConfig.temp_delta = request.getPostParameter("temp_delta").toFloat();
-//			ActiveConfig.temp_interval = request.getPostParameter("temp_interval").toInt();
-//			ActiveConfig.switch_interval = request.getPostParameter("switch_interval").toInt();
-//
+//	ValveConfig cfg = loadConfig();
+	if (request.getRequestMethod() == RequestMethod::POST)
+	{
+		debugf("Update config");
+		// Update config
+		if (request.getPostParameter("SSID").length() > 0) // Network
+		{
+			ActiveConfig.NetworkSSID = request.getPostParameter("SSID");
+			ActiveConfig.NetworkPassword = request.getPostParameter("Password");
+		}
+		if (request.getPostParameter("mode_switch_temp").length() > 0) // Settings
+		{
+			ActiveConfig.mode_switch_temp = request.getPostParameter("mode_switch_temp").toFloat();
+			ActiveConfig.mode_switch_temp_delta = request.getPostParameter("mode_switch_temp_delta").toFloat();
+			ActiveConfig.pump_on_delay = request.getPostParameter("pump_on_delay").toInt();
+			ActiveConfig.pump_off_delay = request.getPostParameter("pump_off_delay").toInt();
+			ActiveConfig.caldron_on_delay = request.getPostParameter("caldron_on_delay").toInt();
+
 //			DynamicJsonBuffer jsonBuffer;
 //			JsonObject& root = jsonBuffer.createObject();
 //
@@ -46,21 +47,23 @@ void onConfiguration(HttpRequest &request, HttpResponse &response)
 //
 //			root.printTo(Serial);
 //			Serial.println();
-//		}
-//
-//		saveConfig(ActiveConfig);
-//		response.redirect();
-//	}
-//
-//	debugf("Send template");
-//	TemplateFileStream *tmpl = new TemplateFileStream("config.html");
-//	auto &vars = tmpl->variables();
-//	vars["SSID"] = ActiveConfig.NetworkSSID;
-//	vars["set_temp"] = String(ActiveConfig.set_temp, 2);
-//	vars["temp_delta"] = String(ActiveConfig.temp_delta, 2);
-//	vars["temp_interval"] = String((int)ActiveConfig.temp_interval);
-//	vars["switch_interval"] = String((int)ActiveConfig.switch_interval);
-//	response.sendTemplate(tmpl);
+		}
+
+		saveConfig(ActiveConfig);
+		response.redirect();
+	}
+
+	debugf("Send template");
+	TemplateFileStream *tmpl = new TemplateFileStream("config.html");
+	auto &vars = tmpl->variables();
+	vars["SSID"] = ActiveConfig.NetworkSSID;
+	vars["mode_switch_temp"] = String(ActiveConfig.mode_switch_temp, 2);
+	vars["mode_switch_temp_delta"] = String(ActiveConfig.mode_switch_temp_delta, 2);
+	vars["pump_on_delay"] = String((int)ActiveConfig.pump_on_delay);
+	vars["pump_off_delay"] = String((int)ActiveConfig.pump_off_delay);
+	vars["caldron_on_delay"] = String((int)ActiveConfig.caldron_on_delay);
+
+	response.sendTemplate(tmpl);
 }
 
 void onFile(HttpRequest &request, HttpResponse &response)
@@ -83,7 +86,8 @@ void onAJAXGetState(HttpRequest &request, HttpResponse &response)
 	JsonObjectStream* stream = new JsonObjectStream();
 	JsonObject& json = stream->getRoot();
 //	JsonArray& sensors = json.createNestedArray("sensors");
-//
+
+//TODO: add temrerature on caldron exit here to display in status
 	json["counter"] = counter;
 //	for (byte n = 0; n < NUM_SENSORS; n++)
 //	{
