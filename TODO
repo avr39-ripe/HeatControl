@@ -1,4 +1,3 @@
-1. WE need delayed pump off!
-2. we ned to check fo NO_PIN!!!
-3. when WARMY and only hi_temp_pin turn it on!!!
+1. Add pointer to ActiveConfig to every class in thermostat model instead of own class variables which have corresponding variable in Active Config
+2. Re-implement configuration page with ajax and rest in mind, so get rid of odd templating vars etc. 
 
