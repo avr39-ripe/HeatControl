@@ -48,19 +48,19 @@ void SPI_loop()
 //    print_byte(out_reg[i]);
 //  }
 
-    for(int i = 0; i < num_ch; i++)
-    {
-    	int curr_state = pinState(i);
-    	if (curr_state & JUSTPRESSED)
-    	{
-    		setState(out_reg, i, !getState(out_reg,i));
-    		Serial.print("ON ch "); Serial.println(i);
-    	}
-
-    	if (curr_state & JUSTRELEASED)
-		{
-			Serial.print("OFF ch "); Serial.println(i);
-		}
+//    for(int i = 0; i < num_ch; i++)
+//    {
+//    	int curr_state = pinState(i);
+//    	if (curr_state & JUSTPRESSED)
+//    	{
+//    		setState(out_reg, i, !getState(out_reg,i));
+//    		Serial.print("ON ch "); Serial.println(i);
+//    	}
+//
+//    	if (curr_state & JUSTRELEASED)
+//		{
+//			Serial.print("OFF ch "); Serial.println(i);
+//		}
 //    	if ((getState(in_reg,i) && (getState(in_reg_prev, i) == false)))
 //    	{
 //    		setState(in_reg_prev, i, true);
@@ -74,7 +74,7 @@ void SPI_loop()
 //			//setState(out_reg, i, false);
 //			Serial.print("Off ch "); Serial.println(i);
 //		}
-    }
+//    }
 }
 
 bool getState(uint8_t * reg, int ch)
