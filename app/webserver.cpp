@@ -57,11 +57,11 @@ void onConfiguration(HttpRequest &request, HttpResponse &response)
 	TemplateFileStream *tmpl = new TemplateFileStream("config.html");
 	auto &vars = tmpl->variables();
 	vars["SSID"] = ActiveConfig.NetworkSSID;
-	vars["mode_switch_temp"] = String(ActiveConfig.mode_switch_temp, 2);
-	vars["mode_switch_temp_delta"] = String(ActiveConfig.mode_switch_temp_delta, 2);
-	vars["pump_on_delay"] = String((int)ActiveConfig.pump_on_delay);
-	vars["pump_off_delay"] = String((int)ActiveConfig.pump_off_delay);
-	vars["caldron_on_delay"] = String((int)ActiveConfig.caldron_on_delay);
+	vars["m_s_t"] = String(ActiveConfig.mode_switch_temp, 2);
+	vars["m_s_t_d"] = String(ActiveConfig.mode_switch_temp_delta, 2);
+	vars["p_on_d"] = String(ActiveConfig.pump_on_delay);
+	vars["p_off_d"] = String(ActiveConfig.pump_off_delay);
+	vars["c_on_d"] = String(ActiveConfig.caldron_on_delay);
 
 	response.sendTemplate(tmpl);
 }

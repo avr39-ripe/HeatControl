@@ -39,7 +39,7 @@ HeatConfig loadConfig()
 
 void saveConfig(HeatConfig& cfg)
 {
-	ActiveConfig = cfg;
+//	ActiveConfig = cfg;
 
 	DynamicJsonBuffer jsonBuffer;
 	JsonObject& root = jsonBuffer.createObject();
