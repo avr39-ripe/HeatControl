@@ -26,6 +26,7 @@
 			(function worker() {
 				$.getJSON('/state', function(data) {
 					$('#counter').html(data.counter);
+					$('#mode_curr_temp').html(data.mode_curr_temp + ' &deg;C');
 					setTimeout(worker, 5000);
 				});
 			})();
@@ -54,6 +55,14 @@
 				</div>
 				<div class="panel-body">
 				  <h1 id="counter" class="text-center main">{Counter}</h1>
+				</div>
+			  </div>
+			   <div class="panel panel-default">
+				<div class="panel-heading">
+				  <h3 class="panel-title">Mode temperature</h3>
+				</div>
+				<div class="panel-body">
+				  <h1 id="mode_curr_temp" class="text-center main">{mode_temp} &deg;C</h1>
 				</div>
 			  </div>
 			</div>

@@ -1,8 +1,10 @@
 #include <user_config.h>
 #include <SmingCore/SmingCore.h>
 
-#include "../include/configuration.h"
-#include "../include/heatcontrol.h"
+#include <configuration.h>
+#include <heatcontrol.h>
+#include <thermostat.h>
+
 
 bool serverStarted = false;
 HttpServer server;
@@ -12,6 +14,7 @@ void onIndex(HttpRequest &request, HttpResponse &response)
 	TemplateFileStream *tmpl = new TemplateFileStream("index.html");
 	auto &vars = tmpl->variables();
 	vars["Counter"] = String(counter);
+	vars["mode_temp"] = String(HSystem._mode_curr_temp);
 	response.sendTemplate(tmpl);
 }
 
@@ -89,6 +92,7 @@ void onAJAXGetState(HttpRequest &request, HttpResponse &response)
 
 //TODO: add temrerature on caldron exit here to display in status
 	json["counter"] = counter;
+	json["mode_curr_temp"] = HSystem._mode_curr_temp;
 //	for (byte n = 0; n < NUM_SENSORS; n++)
 //	{
 //		JsonObject& sensor = sensors.createNestedObject();

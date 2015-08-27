@@ -94,7 +94,14 @@ HeatingSystem::~HeatingSystem()
 
 void HeatingSystem::check_mode()
 {
-//TODO: implement mode chek by 1-wire thermometer
+	if (_mode_curr_temp >= ActiveConfig.mode_switch_temp + ActiveConfig.mode_switch_temp_delta)
+	{
+		_mode = WOOD;
+	}
+	if (_mode_curr_temp <= ActiveConfig.mode_switch_temp - ActiveConfig.mode_switch_temp_delta)
+	{
+		_mode = GAS;
+	}
 }
 
 void HeatingSystem::caldron_turn_on()
@@ -131,12 +138,9 @@ void HeatingSystem::room_turn_on(uint8_t room_id)
 
 void HeatingSystem::room_turn_off(uint8_t room_id)
 {
-	if (_mode == GAS)
-	{
-		setState(out_reg,_rooms[room_id]->hi_t_control_pin, false);
-		_pumps[_rooms[room_id]->pump_id]->turn_off();
-		caldron_turn_off();
-	}
+	setState(out_reg, _rooms[room_id]->hi_t_control_pin, false);
+	_pumps[_rooms[room_id]->pump_id]->turn_off();
+	caldron_turn_off();
 }
 
 void HeatingSystem::check_room(uint8_t room_id)
@@ -200,7 +204,7 @@ void HeatingSystem::_temp_read()
 	float tempRead = ((_temp_data[1] << 8) | _temp_data[0]); //using two's compliment
 	_mode_curr_temp = tempRead / 16;
 
-	Serial.print("_mode_curr_temp = "); Serial.println(_mode_curr_temp);
+//	Serial.print("_mode_curr_temp = "); Serial.println(_mode_curr_temp);
 	_temp_readTimer.stop();
 }
 //OneWire system initialisation

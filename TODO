@@ -1,3 +1,4 @@
-1. Add pointer to ActiveConfig to every class in thermostat model instead of own class variables which have corresponding variable in Active Config
-2. Re-implement configuration page with ajax and rest in mind, so get rid of odd templating vars etc. 
+1. IMPLEMENT PROPER MODE SWITCH
+after wood we should turn_off_all rooms at first!!
+
 
