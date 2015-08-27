@@ -1,5 +1,6 @@
 #include <user_config.h>
 #include <SmingCore/SmingCore.h>
+#include <configuration.h>
 #include <heatcontrol.h>
 #include <thermostat.h>
 
@@ -17,7 +18,7 @@ void Pump::turn_on()
 {
 	if (_consumers == 0)
 	{
-		this->_pumpTimer.initializeMs(_pump_on_delay * 1000, TimerDelegate(&Pump::turn_on_delayed, this)).start(false);
+		this->_pumpTimer.initializeMs(ActiveConfig.pump_on_delay * 1000, TimerDelegate(&Pump::turn_on_delayed, this)).start(false);
 	}
 	_consumers++;
 
@@ -29,7 +30,7 @@ void Pump::turn_off()
 	_consumers--;
 	if (_consumers == 0)
 	{
-		this->_pumpTimer.initializeMs(_pump_off_delay * 1000, TimerDelegate(&Pump::turn_off_delayed, this)).start(false);
+		this->_pumpTimer.initializeMs(ActiveConfig.pump_off_delay * 1000, TimerDelegate(&Pump::turn_off_delayed, this)).start(false);
 	}
 
 }
@@ -96,7 +97,7 @@ void HeatingSystem::caldron_turn_on()
 {
 	if (_caldron_consumers == 0)
 		{
-			this->_caldronTimer.initializeMs(_caldron_on_delay * 1000, TimerDelegate(&HeatingSystem::_caldron_turn_on_delayed, this)).start(false);
+			this->_caldronTimer.initializeMs(ActiveConfig.caldron_on_delay * 1000, TimerDelegate(&HeatingSystem::_caldron_turn_on_delayed, this)).start(false);
 		}
 		_caldron_consumers++;
 }
