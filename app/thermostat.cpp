@@ -1,5 +1,7 @@
 #include <user_config.h>
 #include <SmingCore/SmingCore.h>
+#include <Libraries/OneWire/OneWire.h>
+
 #include <configuration.h>
 #include <heatcontrol.h>
 #include <thermostat.h>
@@ -76,6 +78,8 @@ HeatingSystem::HeatingSystem(uint8_t mode_pin, uint8_t caldron_pin)
 //	this->_rooms[6]->pump_id = PUMP_2;
 //	this->_rooms[7]->pump_id = PUMP_2;
 //	this->_rooms[8]->pump_id = PUMP_2;
+	//Arm temperature start timer
+	_temp_startTimer.initializeMs(4000, TimerDelegate(&HeatingSystem::_temp_start, this)).start(true);
 }
 
 HeatingSystem::~HeatingSystem()
@@ -166,6 +170,41 @@ void HeatingSystem::check()
 		check_room(room_id);
 	}
 }
+
+void HeatingSystem::_temp_start()
+{
+	if (!_temp_readTimer.isStarted())
+	{
+		ds.reset();
+		ds.skip();
+		ds.write(0x44); // start conversion
+
+		_temp_readTimer.initializeMs(750, TimerDelegate(&HeatingSystem::_temp_read, this)).start(false);
+	}
+}
+
+void HeatingSystem::_temp_read()
+{
+
+
+	ds.reset();
+//	ds.select(temp_sensors[n].addr);
+	ds.skip();
+	ds.write(0xBE); // Read Scratchpad
+
+	for (uint8_t i = 0; i < 9; i++)
+	{
+		_temp_data[i] = ds.read();
+	}
+
+	float tempRead = ((_temp_data[1] << 8) | _temp_data[0]); //using two's compliment
+	_mode_curr_temp = tempRead / 16;
+
+	Serial.print("_mode_curr_temp = "); Serial.println(_mode_curr_temp);
+	_temp_readTimer.stop();
+}
+//OneWire system initialisation
+OneWire ds(ONEWIRE_PIN);
 
 //HeatingSystem initialisation
 HeatingSystem HSystem(0, 5);

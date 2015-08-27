@@ -48,15 +48,21 @@ public:
 	void check_mode();
 	void check(); //run periodically by timer to check mode and rooms
 	uint16_t _caldron_on_delay;
-	float	_mode_switch_temp;
-	float	_mode_switch_temp_delta;
+	float _mode_switch_temp;
+	float _mode_switch_temp_delta;
+	float _mode_curr_temp;
 private:
 	void _caldron_turn_on_delayed();
+	void _temp_start();
+	void _temp_read();
 	uint8_t _mode;
 	uint8_t _mode_pin;
 	uint8_t _caldron_pin;
 	uint8_t _caldron_consumers = 0;
 	Timer _caldronTimer;
+	Timer _temp_startTimer;
+	Timer _temp_readTimer;
+	uint8_t _temp_data[12];
 	Room* _rooms[numRooms];
 	Pump* _pumps[2];
 };

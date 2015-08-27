@@ -1,5 +1,6 @@
 #ifndef INCLUDE_HEATCONTROL_H_
 #define INCLUDE_HEATCONTROL_H_
+#include <Libraries/OneWire/OneWire.h>
 
 //SPI_loop stuff
 const int miso_pin = 12; // 74hc165 data out
@@ -30,5 +31,9 @@ void SPI_loop();
 void setState(uint8_t * reg, int ch, uint8_t state);
 bool getState(uint8_t * reg, int ch);
 int pinState(int ch);
+
+//OneWire stuff
+const uint8_t ONEWIRE_PIN = 0;
+extern OneWire ds;
 
 #endif /* INCLUDE_HEATCONTROL_H_ */
