@@ -8,11 +8,11 @@ HeatConfig loadConfig()
 {
 	DynamicJsonBuffer jsonBuffer;
 	HeatConfig cfg;
-	if (fileExist(VALVE_CONFIG_FILE))
+	if (fileExist(HEAT_CONFIG_FILE))
 	{
-		int size = fileGetSize(VALVE_CONFIG_FILE);
+		int size = fileGetSize(HEAT_CONFIG_FILE);
 		char* jsonString = new char[size + 1];
-		fileGetContent(VALVE_CONFIG_FILE, jsonString, size + 1);
+		fileGetContent(HEAT_CONFIG_FILE, jsonString, size + 1);
 		JsonObject& root = jsonBuffer.parseObject(jsonString);
 
 		JsonObject& network = root["network"];
@@ -59,7 +59,7 @@ void saveConfig(HeatConfig& cfg)
 
 	char buf[3048];
 	root.prettyPrintTo(buf, sizeof(buf));
-	fileSetContent(VALVE_CONFIG_FILE, buf);
+	fileSetContent(HEAT_CONFIG_FILE, buf);
 }
 
 

@@ -5,10 +5,10 @@
 #include <SmingCore/SmingCore.h>
 
 // Put you SSID and Password here
-#define WIFI_SSID "infjust"
-#define WIFI_PWD "jujust12"
+const char WIFI_SSID[] = "infjust";
+const char WIFI_PWD[] = "jujust12";
 
-const char VALVE_CONFIG_FILE[] = ".heat.conf"; // leading point for security reasons :)
+const char HEAT_CONFIG_FILE[] = ".heat.conf"; // leading point for security reasons :)
 
 struct HeatConfig
 {
