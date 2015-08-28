@@ -106,10 +106,10 @@ void HeatingSystem::check_mode()
 	if ((_mode_curr_temp <= ActiveConfig.mode_switch_temp - ActiveConfig.mode_switch_temp_delta) && (_mode != GAS))
 	{
 		_mode = GAS;
-//		for(uint8_t id = 0; id < numRooms; id++)
-//		{
-//			room_turn_off(id);
-//		}
+		for(uint8_t id = 0; id < numRooms; id++)
+		{
+			room_turn_off(id);
+		}
 	}
 }
 
