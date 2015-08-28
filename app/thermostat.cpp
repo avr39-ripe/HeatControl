@@ -94,34 +94,56 @@ HeatingSystem::~HeatingSystem()
 
 void HeatingSystem::check_mode()
 {
-	if (_mode_curr_temp >= ActiveConfig.mode_switch_temp + ActiveConfig.mode_switch_temp_delta)
+	if ((_mode_curr_temp >= ActiveConfig.mode_switch_temp + ActiveConfig.mode_switch_temp_delta) && (_mode != WOOD))
 	{
 		_mode = WOOD;
+		caldron_turn_off();
+		for(uint8_t id = 0; id < numRooms; id++)
+		{
+			room_turn_on(id);
+		}
 	}
-	if (_mode_curr_temp <= ActiveConfig.mode_switch_temp - ActiveConfig.mode_switch_temp_delta)
+	if ((_mode_curr_temp <= ActiveConfig.mode_switch_temp - ActiveConfig.mode_switch_temp_delta) && (_mode != GAS))
 	{
 		_mode = GAS;
+//		for(uint8_t id = 0; id < numRooms; id++)
+//		{
+//			room_turn_off(id);
+//		}
 	}
 }
 
 void HeatingSystem::caldron_turn_on()
 {
-	if (_caldron_consumers == 0)
+	if (_mode == GAS)
+	{
+		if (_caldron_consumers == 0)
 		{
 			this->_caldronTimer.initializeMs(ActiveConfig.caldron_on_delay * 1000, TimerDelegate(&HeatingSystem::_caldron_turn_on_delayed, this)).start(false);
 		}
 		_caldron_consumers++;
+	}
 }
 
 void HeatingSystem::caldron_turn_off()
 {
-	_caldron_consumers--;
-	if (_caldron_consumers == 0)
+	if (_mode == GAS)
 	{
+		if (_caldron_consumers > 0) //after switch back from WOOD mode we have all rooms ON but gas caldron is already turned OFF and without this we overturn off caldron
+			_caldron_consumers--;
+		if (_caldron_consumers == 0)
+		{
+			setState(out_reg, _caldron_pin, false);
+			this->_caldronTimer.stop();
+		}
+		return;
+	}
+	if (_mode == WOOD)
+	{
+		_caldron_consumers = 0;
 		setState(out_reg, _caldron_pin, false);
 		this->_caldronTimer.stop();
 	}
-
 }
 
 void HeatingSystem::_caldron_turn_on_delayed()
@@ -131,16 +153,24 @@ void HeatingSystem::_caldron_turn_on_delayed()
 
 void HeatingSystem::room_turn_on(uint8_t room_id)
 {
-	setState(out_reg, _rooms[room_id]->hi_t_control_pin, true);
-	_pumps[_rooms[room_id]->pump_id]->turn_on();
-	caldron_turn_on();
+	if (getState(out_reg, _rooms[room_id]->hi_t_control_pin) == false) //ensure room is really turned OFF
+	{
+		setState(out_reg, _rooms[room_id]->hi_t_control_pin, true);
+		_pumps[_rooms[room_id]->pump_id]->turn_on();
+		if (_mode == GAS)
+			caldron_turn_on();
+	}
 }
 
 void HeatingSystem::room_turn_off(uint8_t room_id)
 {
-	setState(out_reg, _rooms[room_id]->hi_t_control_pin, false);
-	_pumps[_rooms[room_id]->pump_id]->turn_off();
-	caldron_turn_off();
+	if (getState(out_reg, _rooms[room_id]->hi_t_control_pin) == true) //ensure room is really turned ON
+	{
+		setState(out_reg, _rooms[room_id]->hi_t_control_pin, false);
+		_pumps[_rooms[room_id]->pump_id]->turn_off();
+		if (_mode == GAS)
+			caldron_turn_off();
+	}
 }
 
 void HeatingSystem::check_room(uint8_t room_id)
@@ -149,12 +179,12 @@ void HeatingSystem::check_room(uint8_t room_id)
 	{
 		int thermostat_state = pinState(_rooms[room_id]->thermostat_pin);
 
-		if (thermostat_state & JUSTPRESSED)
+		if (thermostat_state & PRESSED)
 		{
 			room_turn_on(room_id);
 		}
 
-		if (thermostat_state & JUSTRELEASED)
+		if (thermostat_state & RELEASED)
 		{
 			room_turn_off(room_id);
 		}
