@@ -39,12 +39,12 @@ void Pump::turn_off()
 
 void Pump::turn_on_delayed()
 {
-	setOutState(_pump_pin, true);
+	setState(out_reg, _pump_pin, true, true);
 }
 
 void Pump::turn_off_delayed()
 {
-	setOutState(_pump_pin, false);
+	setState(out_reg, _pump_pin, false, true);
 }
 
 //HeatingSystem implementation
