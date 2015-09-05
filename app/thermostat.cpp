@@ -133,7 +133,7 @@ void HeatingSystem::caldron_turn_off()
 			_caldron_consumers--;
 		if (_caldron_consumers == 0)
 		{
-			setState(out_reg, _caldron_pin, false);
+			setOutState(_caldron_pin, false);
 			this->_caldronTimer.stop();
 		}
 		return;
@@ -141,21 +141,21 @@ void HeatingSystem::caldron_turn_off()
 	if (_mode == WOOD)
 	{
 		_caldron_consumers = 0;
-		setState(out_reg, _caldron_pin, false);
+		setOutState(_caldron_pin, false);
 		this->_caldronTimer.stop();
 	}
 }
 
 void HeatingSystem::_caldron_turn_on_delayed()
 {
-	setState(out_reg, _caldron_pin, true);
+	setOutState(_caldron_pin, true);
 }
 
 void HeatingSystem::room_turn_on(uint8_t room_id)
 {
-	if (getState(out_reg, _rooms[room_id]->hi_t_control_pin) == false) //ensure room is really turned OFF
+	if (getOutState(_rooms[room_id]->hi_t_control_pin) == false) //ensure room is really turned OFF
 	{
-		setState(out_reg, _rooms[room_id]->hi_t_control_pin, true);
+		setOutState(_rooms[room_id]->hi_t_control_pin, true);
 		_pumps[_rooms[room_id]->pump_id]->turn_on();
 		if (_mode == GAS)
 			caldron_turn_on();
@@ -164,9 +164,9 @@ void HeatingSystem::room_turn_on(uint8_t room_id)
 
 void HeatingSystem::room_turn_off(uint8_t room_id)
 {
-	if (getState(out_reg, _rooms[room_id]->hi_t_control_pin) == true) //ensure room is really turned ON
+	if (getOutState(_rooms[room_id]->hi_t_control_pin) == true) //ensure room is really turned ON
 	{
-		setState(out_reg, _rooms[room_id]->hi_t_control_pin, false);
+		setOutState(_rooms[room_id]->hi_t_control_pin, false);
 		_pumps[_rooms[room_id]->pump_id]->turn_off();
 		if (_mode == GAS)
 			caldron_turn_off();
