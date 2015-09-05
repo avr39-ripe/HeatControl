@@ -16,9 +16,9 @@ struct HeatConfig
 	{
 		mode_switch_temp = 60; //C degree
 		mode_switch_temp_delta = 1; //C dgree
-		pump_on_delay = 4 * 60; //seconds
-		pump_off_delay = 4 *60; //seconds
-		caldron_on_delay = 4 * 60; //seconds
+		pump_on_delay = 10; //seconds
+		pump_off_delay = 10; //seconds
+		caldron_on_delay = 10; //seconds
 	}
 
 	String NetworkSSID;

@@ -4,7 +4,8 @@
 
 #include <SmingCore/SPI.h>
 
-uint8_t out_reg[num_reg] = {255,255};
+uint8_t out_reg[num_reg] = {63,255};
+uint8_t out_reg_am[num_reg] = {252,255}; //TODO: for tests 1 and 2 channels made active HIGH for SSD RELAY (ALWAYS ACTIVE LOW)
 uint8_t in_reg[num_reg];
 uint8_t in_reg_prev[num_reg] = {255,255};
 
@@ -77,33 +78,33 @@ void SPI_loop()
 //    }
 }
 
-bool getState(uint8_t * reg, int ch)
+bool getState(uint8_t * reg, int ch, uint8_t active_mode)
 {
 	int regIndex = ch >> 3;
 	int bitIndex = ch ^ regIndex << 3;
 
 	if((reg[regIndex] & (1 << bitIndex)) == 0)
 	{
-		return true; //Active LOW
+		return !active_mode; //Active LOW
 	}
 	else
 	{
-		return false;
+		return active_mode;
 	}
 }
 
-void setState(uint8_t * reg, int ch, uint8_t state)
+void setState(uint8_t * reg, int ch, uint8_t state, uint8_t active_mode)
 {
 	int regIndex = ch >> 3;
 	int bitIndex = ch ^ regIndex << 3;
 
 	if (state == 1)
 	{
-		reg[regIndex] &= ~(1 << bitIndex); //Active LOW
+		active_mode ? reg[regIndex] |= (1 << bitIndex) : reg[regIndex] &= ~(1 << bitIndex); //Active LOW
 	}
 	else
 	{
-		reg[regIndex] |= (1 << bitIndex);
+		active_mode ? reg[regIndex] &= ~(1 << bitIndex) : reg[regIndex] |= (1 << bitIndex);
 	}
 }
 
@@ -125,6 +126,17 @@ int pinState(int ch)
 	else if (getState(in_reg, ch) == false)
 		return (RELEASED);
 }
+
+void setOutState(int ch, uint8_t state)
+{
+	setState(out_reg, ch, state, false);
+}
+
+bool getOutState(int ch)
+{
+	getState(out_reg, ch, false);
+}
+
 // A function that prints all the 1's and 0's of a byte, so 8 bits +or- 2
 void print_byte(byte val)
 {

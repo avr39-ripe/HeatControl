@@ -13,7 +13,8 @@ const byte num_reg = num_ch / 8;
 
 extern uint8_t out_reg[num_reg];
 extern uint8_t in_reg[num_reg];
-extern uint8_t in_reg_prev[num_reg];
+extern uint8_t in_reg_prev[num_reg]; //stores previous pin state for catching JUST* events
+extern uint8_t out_reg_am[num_reg]; //stores configuration of active_mode for the pin either HIGH or LOW
 
 enum pinStates {
 	RELEASED		= (1u << 0),
@@ -28,9 +29,11 @@ extern unsigned long counter;
 void print_byte(byte val);
 void SPI_loop();
 
-void setState(uint8_t * reg, int ch, uint8_t state);
-bool getState(uint8_t * reg, int ch);
+void setState(uint8_t * reg, int ch, uint8_t state, uint8_t active_mode = false);
+bool getState(uint8_t * reg, int ch, uint8_t active_mode = false);
 int pinState(int ch);
+void setOutState(int ch, uint8_t state);
+bool getOutState(int ch);
 
 //OneWire stuff
 const uint8_t ONEWIRE_PIN = 0;
