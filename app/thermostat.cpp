@@ -6,6 +6,24 @@
 #include <heatcontrol.h>
 #include <thermostat.h>
 
+//Room implementation
+Room::Room(uint8_t thermostat_pin, HeatingSystem* heating_system)
+{
+	this->_thermostat_pin = thermostat_pin;
+	this->_heating_system = heating_system;
+	this->_room_off_delay = 0;
+//	terminal_units = Vector<TerminalUnit> (0,1);
+}
+
+void Room::addTU(uint8_t circuit_pin, CircuitTypes circuit_type, uint8_t pump_id)
+{
+	TerminalUnit newTU;
+	newTU.circuit_pin = circuit_pin;
+	newTU.circuit_type = circuit_type;
+	newTU.pump_id = pump_id;
+
+	terminal_units.addElement(newTU);
+}
 //Pump implementation
 
 Pump::Pump(uint8_t pump_pin)
@@ -64,20 +82,14 @@ HeatingSystem::HeatingSystem(uint8_t mode_pin, uint8_t caldron_pin)
 	//rooms init
 	for(uint8_t id = 0; id < numRooms; id++)
 	{
-		this->_rooms[id] = new Room;
-		this->_rooms[id]->hi_t_control_pin = id;
-		this->_rooms[id]->thermostat_pin = id;
+		this->_rooms[id] = new Room(0, this);
 	}
-	//assign each room corresponding pump_id
-	this->_rooms[0]->pump_id = PUMP_1;
-	this->_rooms[1]->pump_id = PUMP_1;
-	this->_rooms[2]->pump_id = PUMP_1;
-	this->_rooms[3]->pump_id = PUMP_2;
-	this->_rooms[4]->pump_id = PUMP_2;
-//	this->_rooms[5]->pump_id = PUMP_2;
-//	this->_rooms[6]->pump_id = PUMP_2;
-//	this->_rooms[7]->pump_id = PUMP_2;
-//	this->_rooms[8]->pump_id = PUMP_2;
+	//assign each room corresponding TUs
+	this->_rooms[0]->addTU(0, high_temp, PUMP_1);
+	this->_rooms[1]->addTU(1, high_temp, PUMP_1);
+	this->_rooms[2]->addTU(2, high_temp, PUMP_1);
+	this->_rooms[3]->addTU(3, high_temp, PUMP_2);
+	this->_rooms[4]->addTU(4, high_temp, PUMP_2);
 	//Arm temperature start timer
 	_temp_startTimer.initializeMs(4000, TimerDelegate(&HeatingSystem::_temp_start, this)).start(true);
 }

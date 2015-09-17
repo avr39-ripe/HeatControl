@@ -10,12 +10,34 @@ enum HeatingSystemModes { GAS = 0u, WOOD = 1u };
 //Pump indexes
 enum PumpIndexes {PUMP_1 = 0u, PUMP_2 = 1u };
 
+//Circuit types
+enum CircuitTypes {high_temp = 0u, low_temp = 1u };
 
-struct Room
+struct TerminalUnit
 {
-	uint8_t thermostat_pin;
-	uint8_t hi_t_control_pin;
+	uint8_t circuit_pin;
+	CircuitTypes circuit_type;
 	uint8_t pump_id;
+
+};
+
+class HeatingSystem;
+
+class Room
+{
+public:
+	Room(uint8_t thermostat_pin, HeatingSystem* heating_system);
+	void addTU(uint8_t circuit_pin, CircuitTypes circuit_type, uint8_t pump_id);
+//TODO:	void deleteTU(uint8_t tu_id);
+	void turn_on();
+	void turn_off();
+	uint8_t _thermostat_pin;
+	Vector<TerminalUnit> terminal_units;
+	uint16_t _room_off_delay;
+private:
+	HeatingSystem* _heating_system;
+	Timer _roomTimer;
+	void turn_off_delayed();
 };
 
 class Pump
