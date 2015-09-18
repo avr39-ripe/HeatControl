@@ -22,7 +22,52 @@ void Room::addTU(uint8_t circuit_pin, CircuitTypes circuit_type, uint8_t pump_id
 	newTU.circuit_type = circuit_type;
 	newTU.pump_id = pump_id;
 
-	terminal_units.addElement(newTU);
+	_terminal_units.addElement(newTU);
+//	Serial.print("Room: "); Serial.print(this->_thermostat_pin); Serial.print("TU size"); Serial.println(this->_terminal_units.count());
+}
+
+void Room::turn_on()
+{
+	for (uint8_t i = 0; i < _terminal_units.count(); i++)
+	{
+		switch (_terminal_units[i].circuit_type)
+		{
+			high_temp:
+				Serial.print("try to switch on room "); Serial.println(this->_thermostat_pin);
+				if (getState(out_reg, _terminal_units[i].circuit_pin) == false) //ensure room is really turned OFF
+				{
+					Serial.print("Switch on room "); Serial.println(this->_thermostat_pin);
+					setState(out_reg, _terminal_units[i].circuit_pin, true);
+					_heating_system->_pumps[_terminal_units[i].pump_id]->turn_on();
+					if (_heating_system->_mode == GAS)
+						_heating_system->caldron_turn_on();
+				}
+				break;
+			low_temp:
+				;
+		}
+	}
+}
+
+void Room::turn_off()
+{
+	for (uint8_t i = 0; i < _terminal_units.count(); i++)
+	{
+		switch (_terminal_units[i].circuit_type)
+		{
+			high_temp:
+				if (getState(out_reg, _terminal_units[i].circuit_pin) == true) //ensure room is really turned ON
+				{
+					setState(out_reg, _terminal_units[i].circuit_pin, false);
+					_heating_system->_pumps[_terminal_units[i].pump_id]->turn_off();
+					if (_heating_system->_mode == GAS)
+						_heating_system->caldron_turn_off();
+				}
+				break;
+			low_temp:
+				;
+		}
+	}
 }
 //Pump implementation
 
@@ -57,12 +102,12 @@ void Pump::turn_off()
 
 void Pump::turn_on_delayed()
 {
-	setState(out_reg, _pump_pin, true, true);
+	setState(out_reg, _pump_pin, true);
 }
 
 void Pump::turn_off_delayed()
 {
-	setState(out_reg, _pump_pin, false, true);
+	setState(out_reg, _pump_pin, false);
 }
 
 //HeatingSystem implementation
@@ -80,9 +125,9 @@ HeatingSystem::HeatingSystem(uint8_t mode_pin, uint8_t caldron_pin)
 	this->_pumps[0] = new Pump(6);
 	this->_pumps[1] = new Pump(7);
 	//rooms init
-	for(uint8_t id = 0; id < numRooms; id++)
+	for(uint8_t room_id = 0; room_id < numRooms; room_id++)
 	{
-		this->_rooms[id] = new Room(0, this);
+		this->_rooms[room_id] = new Room(room_id, this);
 	}
 	//assign each room corresponding TUs
 	this->_rooms[0]->addTU(0, high_temp, PUMP_1);
@@ -108,19 +153,21 @@ void HeatingSystem::check_mode()
 {
 	if ((_mode_curr_temp >= ActiveConfig.mode_switch_temp + ActiveConfig.mode_switch_temp_delta) && (_mode != WOOD))
 	{
+		Serial.println("mode = WOOD");
 		_mode = WOOD;
 		caldron_turn_off();
-		for(uint8_t id = 0; id < numRooms; id++)
+		for(uint8_t room_id = 0; room_id < numRooms; room_id++)
 		{
-			room_turn_on(id);
+			_rooms[room_id]->turn_on();
 		}
 	}
 	if ((_mode_curr_temp <= ActiveConfig.mode_switch_temp - ActiveConfig.mode_switch_temp_delta) && (_mode != GAS))
 	{
+		Serial.println("mode = GAS");
 		_mode = GAS;
-		for(uint8_t id = 0; id < numRooms; id++)
+		for(uint8_t room_id = 0; room_id < numRooms; room_id++)
 		{
-			room_turn_off(id);
+			_rooms[room_id]->turn_off();
 		}
 	}
 }
@@ -163,48 +210,26 @@ void HeatingSystem::_caldron_turn_on_delayed()
 	setState(out_reg, _caldron_pin, true);
 }
 
-void HeatingSystem::room_turn_on(uint8_t room_id)
-{
-	if (getState(out_reg, _rooms[room_id]->hi_t_control_pin) == false) //ensure room is really turned OFF
-	{
-		setState(out_reg, _rooms[room_id]->hi_t_control_pin, true);
-		_pumps[_rooms[room_id]->pump_id]->turn_on();
-		if (_mode == GAS)
-			caldron_turn_on();
-	}
-}
-
-void HeatingSystem::room_turn_off(uint8_t room_id)
-{
-	if (getState(out_reg, _rooms[room_id]->hi_t_control_pin) == true) //ensure room is really turned ON
-	{
-		setState(out_reg, _rooms[room_id]->hi_t_control_pin, false);
-		_pumps[_rooms[room_id]->pump_id]->turn_off();
-		if (_mode == GAS)
-			caldron_turn_off();
-	}
-}
-
 void HeatingSystem::check_room(uint8_t room_id)
 {
 	if (_mode == GAS)
 	{
-		int thermostat_state = pinState(_rooms[room_id]->thermostat_pin);
+		int thermostat_state = pinState(_rooms[room_id]->_thermostat_pin);
 
 		if (thermostat_state & PRESSED)
 		{
-			room_turn_on(room_id);
+			_rooms[room_id]->turn_on();
 		}
 
 		if (thermostat_state & RELEASED)
 		{
-			room_turn_off(room_id);
+			_rooms[room_id]->turn_off();
 		}
 	}
 	else
 	{
 		//To enshure that even after power fail, or reset or whatever - all rooms in WOOD mode are turned on
-		room_turn_on(room_id);
+		_rooms[room_id]->turn_on();
 	}
 }
 

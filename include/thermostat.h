@@ -32,7 +32,7 @@ public:
 	void turn_on();
 	void turn_off();
 	uint8_t _thermostat_pin;
-	Vector<TerminalUnit> terminal_units;
+	Vector<TerminalUnit> _terminal_units;
 	uint16_t _room_off_delay;
 private:
 	HeatingSystem* _heating_system;
@@ -65,19 +65,18 @@ public:
 	void caldron_turn_on();
 	void caldron_turn_off();
 	void check_room(uint8_t room_id);
-	void room_turn_on(uint8_t room_id);
-	void room_turn_off(uint8_t room_id);
 	void check_mode();
 	void check(); //run periodically by timer to check mode and rooms
 	uint16_t _caldron_on_delay;
 	float _mode_switch_temp;
 	float _mode_switch_temp_delta;
 	float _mode_curr_temp;
+	uint8_t _mode;
+	Pump* _pumps[2];
 private:
 	void _caldron_turn_on_delayed();
 	void _temp_start();
 	void _temp_read();
-	uint8_t _mode;
 	uint8_t _mode_pin;
 	uint8_t _caldron_pin;
 	uint8_t _caldron_consumers = 0;
@@ -86,7 +85,7 @@ private:
 	Timer _temp_readTimer;
 	uint8_t _temp_data[12];
 	Room* _rooms[numRooms];
-	Pump* _pumps[2];
+
 };
 
 extern HeatingSystem HSystem;
