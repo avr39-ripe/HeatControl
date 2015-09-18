@@ -12,7 +12,7 @@ Room::Room(uint8_t thermostat_pin, HeatingSystem* heating_system)
 	this->_thermostat_pin = thermostat_pin;
 	this->_heating_system = heating_system;
 	this->_room_off_delay = 0;
-//	terminal_units = Vector<TerminalUnit> (0,1);
+//	_terminal_units = Vector<TerminalUnit> (1,1);
 }
 
 void Room::addTU(uint8_t circuit_pin, CircuitTypes circuit_type, uint8_t pump_id)
@@ -22,29 +22,30 @@ void Room::addTU(uint8_t circuit_pin, CircuitTypes circuit_type, uint8_t pump_id
 	newTU.circuit_type = circuit_type;
 	newTU.pump_id = pump_id;
 
-	_terminal_units.addElement(newTU);
-//	Serial.print("Room: "); Serial.print(this->_thermostat_pin); Serial.print("TU size"); Serial.println(this->_terminal_units.count());
+	_terminal_units.add(newTU);
+//	Serial.print("Room: "); Serial.print(_thermostat_pin); Serial.print("TU size"); Serial.println(_terminal_units.count());
 }
 
 void Room::turn_on()
 {
+	Serial.print("INSIDE room TURN ON of Room #"); Serial.println(this->_thermostat_pin);
 	for (uint8_t i = 0; i < _terminal_units.count(); i++)
 	{
 		switch (_terminal_units[i].circuit_type)
 		{
-			high_temp:
-				Serial.print("try to switch on room "); Serial.println(this->_thermostat_pin);
-				if (getState(out_reg, _terminal_units[i].circuit_pin) == false) //ensure room is really turned OFF
-				{
-					Serial.print("Switch on room "); Serial.println(this->_thermostat_pin);
-					setState(out_reg, _terminal_units[i].circuit_pin, true);
-					_heating_system->_pumps[_terminal_units[i].pump_id]->turn_on();
-					if (_heating_system->_mode == GAS)
-						_heating_system->caldron_turn_on();
-				}
-				break;
-			low_temp:
-				;
+		case high_temp:
+			Serial.print("try to switch on room "); Serial.println(this->_thermostat_pin);
+			if (getState(out_reg, _terminal_units[i].circuit_pin) == false) //ensure room is really turned OFF
+			{
+				Serial.print("Switch on room "); Serial.println(this->_thermostat_pin);
+				setState(out_reg, _terminal_units[i].circuit_pin, true);
+				_heating_system->_pumps[_terminal_units[i].pump_id]->turn_on();
+				if (_heating_system->_mode == GAS)
+					_heating_system->caldron_turn_on();
+			}
+			break;
+		case low_temp:
+			;
 		}
 	}
 }
@@ -55,17 +56,17 @@ void Room::turn_off()
 	{
 		switch (_terminal_units[i].circuit_type)
 		{
-			high_temp:
-				if (getState(out_reg, _terminal_units[i].circuit_pin) == true) //ensure room is really turned ON
-				{
-					setState(out_reg, _terminal_units[i].circuit_pin, false);
-					_heating_system->_pumps[_terminal_units[i].pump_id]->turn_off();
-					if (_heating_system->_mode == GAS)
-						_heating_system->caldron_turn_off();
-				}
-				break;
-			low_temp:
-				;
+		case high_temp:
+			if (getState(out_reg, _terminal_units[i].circuit_pin) == true) //ensure room is really turned ON
+			{
+				setState(out_reg, _terminal_units[i].circuit_pin, false);
+				_heating_system->_pumps[_terminal_units[i].pump_id]->turn_off();
+				if (_heating_system->_mode == GAS)
+					_heating_system->caldron_turn_off();
+			}
+			break;
+		case low_temp:
+			;
 		}
 	}
 }
@@ -218,6 +219,7 @@ void HeatingSystem::check_room(uint8_t room_id)
 
 		if (thermostat_state & PRESSED)
 		{
+			Serial.print("PRESSED"); Serial.println(_rooms[room_id]->_thermostat_pin);
 			_rooms[room_id]->turn_on();
 		}
 

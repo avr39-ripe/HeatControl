@@ -4,7 +4,7 @@
 
 #include <SmingCore/SPI.h>
 
-uint8_t out_reg[num_reg] = {63,255};
+uint8_t out_reg[num_reg] = {255,255};
 uint8_t out_reg_am[num_reg] = {252,255}; //TODO: for tests 1 and 2 channels made active HIGH for SSD RELAY (ALWAYS ACTIVE LOW)
 uint8_t in_reg[num_reg];
 uint8_t in_reg_prev[num_reg] = {255,255};
