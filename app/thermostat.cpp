@@ -23,21 +23,17 @@ void Room::addTU(uint8_t circuit_pin, CircuitTypes circuit_type, uint8_t pump_id
 	newTU.pump_id = pump_id;
 
 	_terminal_units.add(newTU);
-//	Serial.print("Room: "); Serial.print(_thermostat_pin); Serial.print("TU size"); Serial.println(_terminal_units.count());
 }
 
 void Room::turn_on()
 {
-	Serial.print("INSIDE room TURN ON of Room #"); Serial.println(this->_thermostat_pin);
 	for (uint8_t i = 0; i < _terminal_units.count(); i++)
 	{
 		switch (_terminal_units[i].circuit_type)
 		{
 		case high_temp:
-			Serial.print("try to switch on room "); Serial.println(this->_thermostat_pin);
 			if (getState(out_reg, _terminal_units[i].circuit_pin) == false) //ensure room is really turned OFF
 			{
-				Serial.print("Switch on room "); Serial.println(this->_thermostat_pin);
 				setState(out_reg, _terminal_units[i].circuit_pin, true);
 				_heating_system->_pumps[_terminal_units[i].pump_id]->turn_on();
 				if (_heating_system->_mode == GAS)
@@ -93,7 +89,8 @@ void Pump::turn_on()
 
 void Pump::turn_off()
 {
-	_consumers--;
+	if (_consumers > 0)
+		_consumers--;
 	if (_consumers == 0)
 	{
 		this->_pumpTimer.initializeMs(ActiveConfig.pump_off_delay * 1000, TimerDelegate(&Pump::turn_off_delayed, this)).start(false);
@@ -136,6 +133,14 @@ HeatingSystem::HeatingSystem(uint8_t mode_pin, uint8_t caldron_pin)
 	this->_rooms[2]->addTU(2, high_temp, PUMP_1);
 	this->_rooms[3]->addTU(3, high_temp, PUMP_2);
 	this->_rooms[4]->addTU(4, high_temp, PUMP_2);
+
+	//Turn everything OFF
+	for (auto room: _rooms)
+		room->turn_off();
+	for (auto pump: _pumps)
+		pump->turn_off();
+	this->caldron_turn_off();
+
 	//Arm temperature start timer
 	_temp_startTimer.initializeMs(4000, TimerDelegate(&HeatingSystem::_temp_start, this)).start(true);
 }
@@ -154,7 +159,6 @@ void HeatingSystem::check_mode()
 {
 	if ((_mode_curr_temp >= ActiveConfig.mode_switch_temp + ActiveConfig.mode_switch_temp_delta) && (_mode != WOOD))
 	{
-		Serial.println("mode = WOOD");
 		_mode = WOOD;
 		caldron_turn_off();
 		for(uint8_t room_id = 0; room_id < numRooms; room_id++)
@@ -164,7 +168,6 @@ void HeatingSystem::check_mode()
 	}
 	if ((_mode_curr_temp <= ActiveConfig.mode_switch_temp - ActiveConfig.mode_switch_temp_delta) && (_mode != GAS))
 	{
-		Serial.println("mode = GAS");
 		_mode = GAS;
 		for(uint8_t room_id = 0; room_id < numRooms; room_id++)
 		{
@@ -219,7 +222,6 @@ void HeatingSystem::check_room(uint8_t room_id)
 
 		if (thermostat_state & PRESSED)
 		{
-			Serial.print("PRESSED"); Serial.println(_rooms[room_id]->_thermostat_pin);
 			_rooms[room_id]->turn_on();
 		}
 
