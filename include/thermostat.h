@@ -1,6 +1,8 @@
 #ifndef INCLUDE_THERMOSTAT_H_
 #define INCLUDE_THERMOSTAT_H_
 
+#include <vector>
+
 const uint8_t numRooms = 5;
 const uint16_t defaultDelay = 15; //4 * 60 - 4 minutes
 
@@ -72,7 +74,7 @@ public:
 	float _mode_switch_temp_delta;
 	float _mode_curr_temp;
 	uint8_t _mode;
-	Pump* _pumps[2];
+	std::vector<Pump> _pumps;
 private:
 	void _caldron_turn_on_delayed();
 	void _temp_start();
@@ -84,7 +86,7 @@ private:
 	Timer _temp_startTimer;
 	Timer _temp_readTimer;
 	uint8_t _temp_data[12];
-	Room* _rooms[numRooms];
+	std::vector<Room> _rooms;
 
 };
 

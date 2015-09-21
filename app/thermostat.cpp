@@ -35,7 +35,7 @@ void Room::turn_on()
 			if (getState(out_reg, _terminal_units[i].circuit_pin) == false) //ensure room is really turned OFF
 			{
 				setState(out_reg, _terminal_units[i].circuit_pin, true);
-				_heating_system->_pumps[_terminal_units[i].pump_id]->turn_on();
+				_heating_system->_pumps[_terminal_units[i].pump_id].turn_on();
 				if (_heating_system->_mode == GAS)
 					_heating_system->caldron_turn_on();
 			}
@@ -56,7 +56,7 @@ void Room::turn_off()
 			if (getState(out_reg, _terminal_units[i].circuit_pin) == true) //ensure room is really turned ON
 			{
 				setState(out_reg, _terminal_units[i].circuit_pin, false);
-				_heating_system->_pumps[_terminal_units[i].pump_id]->turn_off();
+				_heating_system->_pumps[_terminal_units[i].pump_id].turn_off();
 				if (_heating_system->_mode == GAS)
 					_heating_system->caldron_turn_off();
 			}
@@ -120,25 +120,25 @@ HeatingSystem::HeatingSystem(uint8_t mode_pin, uint8_t caldron_pin)
 	this->_mode_switch_temp = 60;
 	this->_mode_switch_temp_delta = 1;
 	//pumps init
-	this->_pumps[0] = new Pump(6);
-	this->_pumps[1] = new Pump(7);
+	this->_pumps.push_back(Pump(6));
+	this->_pumps.push_back(Pump(7));
 	//rooms init
 	for(uint8_t room_id = 0; room_id < numRooms; room_id++)
 	{
-		this->_rooms[room_id] = new Room(room_id, this);
+		this->_rooms.push_back(Room(room_id, this));
 	}
 	//assign each room corresponding TUs
-	this->_rooms[0]->addTU(0, high_temp, PUMP_1);
-	this->_rooms[1]->addTU(1, high_temp, PUMP_1);
-	this->_rooms[2]->addTU(2, high_temp, PUMP_1);
-	this->_rooms[3]->addTU(3, high_temp, PUMP_2);
-	this->_rooms[4]->addTU(4, high_temp, PUMP_2);
+	this->_rooms[0].addTU(0, high_temp, PUMP_1);
+	this->_rooms[1].addTU(1, high_temp, PUMP_1);
+	this->_rooms[2].addTU(2, high_temp, PUMP_1);
+	this->_rooms[3].addTU(3, high_temp, PUMP_2);
+	this->_rooms[4].addTU(4, high_temp, PUMP_2);
 
 	//Turn everything OFF
 	for (auto room: _rooms)
-		room->turn_off();
+		room.turn_off();
 	for (auto pump: _pumps)
-		pump->turn_off();
+		pump.turn_off();
 	this->caldron_turn_off();
 
 	//Arm temperature start timer
@@ -147,12 +147,12 @@ HeatingSystem::HeatingSystem(uint8_t mode_pin, uint8_t caldron_pin)
 
 HeatingSystem::~HeatingSystem()
 {
-	delete this->_pumps[0];
-	delete this->_pumps[1];
-	for(uint8_t id = 0; id < numRooms; id++)
-	{
-		delete this->_rooms[id];
-	}
+//	delete this->_pumps[0];
+//	delete this->_pumps[1];
+//	for(uint8_t id = 0; id < numRooms; id++)
+//	{
+//		delete this->_rooms[id];
+//	}
 }
 
 void HeatingSystem::check_mode()
@@ -163,7 +163,7 @@ void HeatingSystem::check_mode()
 		caldron_turn_off();
 		for(uint8_t room_id = 0; room_id < numRooms; room_id++)
 		{
-			_rooms[room_id]->turn_on();
+			_rooms[room_id].turn_on();
 		}
 	}
 	if ((_mode_curr_temp <= ActiveConfig.mode_switch_temp - ActiveConfig.mode_switch_temp_delta) && (_mode != GAS))
@@ -171,7 +171,7 @@ void HeatingSystem::check_mode()
 		_mode = GAS;
 		for(uint8_t room_id = 0; room_id < numRooms; room_id++)
 		{
-			_rooms[room_id]->turn_off();
+			_rooms[room_id].turn_off();
 		}
 	}
 }
@@ -218,22 +218,22 @@ void HeatingSystem::check_room(uint8_t room_id)
 {
 	if (_mode == GAS)
 	{
-		int thermostat_state = pinState(_rooms[room_id]->_thermostat_pin);
+		int thermostat_state = pinState(_rooms[room_id]._thermostat_pin);
 
 		if (thermostat_state & PRESSED)
 		{
-			_rooms[room_id]->turn_on();
+			_rooms[room_id].turn_on();
 		}
 
 		if (thermostat_state & RELEASED)
 		{
-			_rooms[room_id]->turn_off();
+			_rooms[room_id].turn_off();
 		}
 	}
 	else
 	{
 		//To enshure that even after power fail, or reset or whatever - all rooms in WOOD mode are turned on
-		_rooms[room_id]->turn_on();
+		_rooms[room_id].turn_on();
 	}
 }
 
