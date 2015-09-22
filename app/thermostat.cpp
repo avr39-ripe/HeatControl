@@ -15,54 +15,31 @@ Room::Room(uint8_t thermostat_pin, HeatingSystem* heating_system)
 //	_terminal_units = Vector<TerminalUnit> (1,1);
 }
 
-void Room::addTU(uint8_t circuit_pin, CircuitTypes circuit_type, uint8_t pump_id)
-{
-	TerminalUnit newTU;
-	newTU.circuit_pin = circuit_pin;
-	newTU.circuit_type = circuit_type;
-	newTU.pump_id = pump_id;
-
-	_terminal_units.add(newTU);
-}
 
 void Room::turn_on()
 {
-	for (uint8_t i = 0; i < _terminal_units.count(); i++)
+	if (_terminal_units[HIGH_TEMP].circuit_pin != NO_PIN )
 	{
-		switch (_terminal_units[i].circuit_type)
+		if (getState(out_reg, _terminal_units[HIGH_TEMP].circuit_pin) == false) //ensure room is really turned OFF
 		{
-		case high_temp:
-			if (getState(out_reg, _terminal_units[i].circuit_pin) == false) //ensure room is really turned OFF
-			{
-				setState(out_reg, _terminal_units[i].circuit_pin, true);
-				_heating_system->_pumps[_terminal_units[i].pump_id]->turn_on();
-				if (_heating_system->_mode == GAS)
-					_heating_system->caldron_turn_on();
-			}
-			break;
-		case low_temp:
-			;
+			setState(out_reg, _terminal_units[HIGH_TEMP].circuit_pin, true);
+			_heating_system->_pumps[_terminal_units[HIGH_TEMP].pump_id]->turn_on();
+			if (_heating_system->_mode == GAS)
+				_heating_system->caldron_turn_on();
 		}
 	}
 }
 
 void Room::turn_off()
 {
-	for (uint8_t i = 0; i < _terminal_units.count(); i++)
+	if (_terminal_units[HIGH_TEMP].circuit_pin != NO_PIN )
 	{
-		switch (_terminal_units[i].circuit_type)
+		if (getState(out_reg, _terminal_units[HIGH_TEMP].circuit_pin) == true) //ensure room is really turned OFF
 		{
-		case high_temp:
-			if (getState(out_reg, _terminal_units[i].circuit_pin) == true) //ensure room is really turned ON
-			{
-				setState(out_reg, _terminal_units[i].circuit_pin, false);
-				_heating_system->_pumps[_terminal_units[i].pump_id]->turn_off();
-				if (_heating_system->_mode == GAS)
-					_heating_system->caldron_turn_off();
-			}
-			break;
-		case low_temp:
-			;
+			setState(out_reg, _terminal_units[HIGH_TEMP].circuit_pin, false);
+			_heating_system->_pumps[_terminal_units[HIGH_TEMP].pump_id]->turn_off();
+			if (_heating_system->_mode == GAS)
+				_heating_system->caldron_turn_off();
 		}
 	}
 }
@@ -128,11 +105,11 @@ HeatingSystem::HeatingSystem(uint8_t mode_pin, uint8_t caldron_pin)
 		this->_rooms[room_id] = new Room(room_id, this);
 	}
 	//assign each room corresponding TUs
-	this->_rooms[0]->addTU(0, high_temp, PUMP_1);
-	this->_rooms[1]->addTU(1, high_temp, PUMP_1);
-	this->_rooms[2]->addTU(2, high_temp, PUMP_1);
-	this->_rooms[3]->addTU(3, high_temp, PUMP_2);
-	this->_rooms[4]->addTU(4, high_temp, PUMP_2);
+	this->_rooms[0]->_terminal_units[HIGH_TEMP] ={0, PUMP_1};
+	this->_rooms[1]->_terminal_units[HIGH_TEMP] ={1, PUMP_1};
+	this->_rooms[2]->_terminal_units[HIGH_TEMP] ={2, PUMP_1};
+	this->_rooms[3]->_terminal_units[HIGH_TEMP] ={3, PUMP_2};
+	this->_rooms[4]->_terminal_units[HIGH_TEMP] ={4, PUMP_2};
 
 	//Turn everything OFF
 	for (auto room: _rooms)
