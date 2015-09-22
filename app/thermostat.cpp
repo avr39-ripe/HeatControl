@@ -24,7 +24,7 @@ void Room::turn_on()
 		{
 			setState(out_reg, _terminal_units[HIGH_TEMP].circuit_pin, true);
 			_heating_system->_pumps[_terminal_units[HIGH_TEMP].pump_id]->turn_on();
-			if (_heating_system->_mode == GAS)
+			if (_heating_system->_mode & GAS)
 				_heating_system->caldron_turn_on();
 		}
 	}
@@ -38,7 +38,7 @@ void Room::turn_off()
 		{
 			setState(out_reg, _terminal_units[HIGH_TEMP].circuit_pin, false);
 			_heating_system->_pumps[_terminal_units[HIGH_TEMP].pump_id]->turn_off();
-			if (_heating_system->_mode == GAS)
+			if (_heating_system->_mode & GAS)
 				_heating_system->caldron_turn_off();
 		}
 	}
@@ -134,7 +134,7 @@ HeatingSystem::~HeatingSystem()
 
 void HeatingSystem::check_mode()
 {
-	if ((_mode_curr_temp >= ActiveConfig.mode_switch_temp + ActiveConfig.mode_switch_temp_delta) && (_mode != WOOD))
+	if ((_mode_curr_temp >= ActiveConfig.mode_switch_temp + ActiveConfig.mode_switch_temp_delta) && (_mode & GAS))
 	{
 		_mode = WOOD;
 		caldron_turn_off();
@@ -143,7 +143,7 @@ void HeatingSystem::check_mode()
 			_rooms[room_id]->turn_on();
 		}
 	}
-	if ((_mode_curr_temp <= ActiveConfig.mode_switch_temp - ActiveConfig.mode_switch_temp_delta) && (_mode != GAS))
+	if ((_mode_curr_temp <= ActiveConfig.mode_switch_temp - ActiveConfig.mode_switch_temp_delta) && (_mode & WOOD))
 	{
 		_mode = GAS;
 		for(uint8_t room_id = 0; room_id < numRooms; room_id++)
@@ -155,7 +155,7 @@ void HeatingSystem::check_mode()
 
 void HeatingSystem::caldron_turn_on()
 {
-	if (_mode == GAS)
+	if (_mode & GAS)
 	{
 		if (_caldron_consumers == 0)
 		{
@@ -167,7 +167,7 @@ void HeatingSystem::caldron_turn_on()
 
 void HeatingSystem::caldron_turn_off()
 {
-	if (_mode == GAS)
+	if (_mode & GAS)
 	{
 		if (_caldron_consumers > 0) //after switch back from WOOD mode we have all rooms ON but gas caldron is already turned OFF and without this we overturn off caldron
 			_caldron_consumers--;
@@ -178,7 +178,7 @@ void HeatingSystem::caldron_turn_off()
 		}
 		return;
 	}
-	if (_mode == WOOD)
+	if (_mode & WOOD)
 	{
 		_caldron_consumers = 0;
 		setState(out_reg, _caldron_pin, false);
@@ -193,7 +193,7 @@ void HeatingSystem::_caldron_turn_on_delayed()
 
 void HeatingSystem::check_room(uint8_t room_id)
 {
-	if (_mode == GAS)
+	if (_mode & GAS)
 	{
 		int thermostat_state = pinState(_rooms[room_id]->_thermostat_pin);
 

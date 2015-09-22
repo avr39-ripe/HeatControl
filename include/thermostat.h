@@ -5,13 +5,13 @@ const uint8_t numRooms = 5;
 const uint16_t defaultDelay = 15; //4 * 60 - 4 minutes
 
 //HeatingSystem modes
-enum HeatingSystemModes { GAS = 0u, WOOD = 1u };
+enum HeatingSystemModes { GAS = 1u, WOOD = 2u , WARMY = 4u, COLDY = 8u};
 
 //Pump indexes
 enum PumpIndexes {PUMP_1 = 0u, PUMP_2 = 1u };
 
 //Circuit types
-enum CircuitTypes {HIGH_TEMP = 0u, LOW_TEMP = 1u };
+enum CircuitTypes {HIGH_TEMP = 0u, LOW_TEMP = 1u};
 const uint8_t numCircuitTypes = 2;
 
 //if there is no high_temp or low_temp circuit in this room use NO_PIN for circuit_pin
