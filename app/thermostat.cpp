@@ -151,6 +151,31 @@ void HeatingSystem::check_mode()
 			_rooms[room_id]->turn_off();
 		}
 	}
+
+	if ( _mode & GAS)
+	{
+		int mode_state = pinState(_mode_pin);
+
+		if ( (mode_state & PRESSED) && !(_mode & COLDY))
+		{
+			_mode = (GAS | COLDY); //Thermostat turns ON when there is too cold outside
+		}
+
+		if ( (mode_state & RELEASED) && !(_mode & WARMY))
+		{
+			_mode = (GAS | WARMY); //Thermostat turns OFF when there is too hot outside
+		}
+	}
+
+	//MODE output for debugging
+	if (_mode & GAS)
+		Serial.println("MODE: GAS");
+	if (_mode & WOOD)
+		Serial.println("MODE: WOOD");
+	if (_mode & COLDY)
+		Serial.println("MODE: COLDY");
+	if (_mode & WARMY)
+		Serial.println("MODE: WARMY");
 }
 
 void HeatingSystem::caldron_turn_on()
@@ -259,4 +284,4 @@ void HeatingSystem::_temp_read()
 OneWire ds(ONEWIRE_PIN);
 
 //HeatingSystem initialisation
-HeatingSystem HSystem(0, 5);
+HeatingSystem HSystem(7, 5);
