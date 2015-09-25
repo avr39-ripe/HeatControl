@@ -39,12 +39,12 @@ void Pump::turn_off()
 
 void Pump::turn_on_delayed()
 {
-	setState(out_reg, _pump_pin, true, true);
+	setState(out_reg, _pump_pin, true);
 }
 
 void Pump::turn_off_delayed()
 {
-	setState(out_reg, _pump_pin, false, true);
+	setState(out_reg, _pump_pin, false);
 }
 
 //HeatingSystem implementation
@@ -59,8 +59,8 @@ HeatingSystem::HeatingSystem(uint8_t mode_pin, uint8_t caldron_pin)
 	this->_mode_switch_temp = 60;
 	this->_mode_switch_temp_delta = 1;
 	//pumps init
-	this->_pumps[0] = new Pump(6);
-	this->_pumps[1] = new Pump(7);
+	this->_pumps[0] = new Pump(10);
+	this->_pumps[1] = new Pump(11);
 	//rooms init
 	for(uint8_t id = 0; id < numRooms; id++)
 	{
@@ -72,12 +72,12 @@ HeatingSystem::HeatingSystem(uint8_t mode_pin, uint8_t caldron_pin)
 	this->_rooms[0]->pump_id = PUMP_1;
 	this->_rooms[1]->pump_id = PUMP_1;
 	this->_rooms[2]->pump_id = PUMP_1;
-	this->_rooms[3]->pump_id = PUMP_2;
-	this->_rooms[4]->pump_id = PUMP_2;
-//	this->_rooms[5]->pump_id = PUMP_2;
-//	this->_rooms[6]->pump_id = PUMP_2;
-//	this->_rooms[7]->pump_id = PUMP_2;
-//	this->_rooms[8]->pump_id = PUMP_2;
+	this->_rooms[3]->pump_id = PUMP_1;
+	this->_rooms[4]->pump_id = PUMP_1;
+	this->_rooms[5]->pump_id = PUMP_1;
+	this->_rooms[6]->pump_id = PUMP_2;
+	this->_rooms[7]->pump_id = PUMP_2;
+	this->_rooms[8]->pump_id = PUMP_2;
 	//Arm temperature start timer
 	_temp_startTimer.initializeMs(4000, TimerDelegate(&HeatingSystem::_temp_start, this)).start(true);
 }
@@ -241,4 +241,4 @@ void HeatingSystem::_temp_read()
 OneWire ds(ONEWIRE_PIN);
 
 //HeatingSystem initialisation
-HeatingSystem HSystem(0, 5);
+HeatingSystem HSystem(0, 9);

@@ -30,12 +30,13 @@ void init()
 //	ActiveConfig.NetworkSSID = WIFI_SSID;
 //	ActiveConfig.NetworkPassword = WIFI_PWD;
 
-	WifiStation.config(ActiveConfig.NetworkSSID, ActiveConfig.NetworkPassword);
-	WifiStation.enable(true);
-//	WifiAccessPoint.enable(false);
+//	WifiStation.config(ActiveConfig.NetworkSSID, ActiveConfig.NetworkPassword);
+//	WifiStation.enable(true);
+//	WifiAccessPoint.enable(true);
 
-	WifiStation.waitConnection(connectOk, 20, connectFail); // We recommend 20+ seconds for connection timeout at start
+//	WifiStation.waitConnection(connectOk, 20, connectFail); // We recommend 20+ seconds for connection timeout at start
 //	wifi_set_phy_mode(PHY_MODE_11G);
+	web_ap_started = true;
 	WifiAccessPoint.config("HeatConfig", "", AUTH_OPEN);
 	WifiAccessPoint.enable(true);
 	startWebServer();

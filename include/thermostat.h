@@ -1,7 +1,7 @@
 #ifndef INCLUDE_THERMOSTAT_H_
 #define INCLUDE_THERMOSTAT_H_
 
-const uint8_t numRooms = 5;
+const uint8_t numRooms = 9;
 const uint16_t defaultDelay = 15; //4 * 60 - 4 minutes
 
 //HeatingSystem modes
