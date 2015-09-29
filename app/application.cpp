@@ -26,6 +26,10 @@ void init()
 	Serial.commandProcessing(false);
 	Serial.setTimeout(2000);
 
+	//SET higher CPU freq & disable wifi sleep
+	system_update_cpu_freq(SYS_CPU_160MHZ);
+	wifi_set_sleep_type(NONE_SLEEP_T);
+
 	ActiveConfig = loadConfig();
 //	ActiveConfig.NetworkSSID = WIFI_SSID;
 //	ActiveConfig.NetworkPassword = WIFI_PWD;
