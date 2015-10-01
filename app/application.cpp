@@ -2,6 +2,9 @@
 #include <SmingCore/SmingCore.h>
 #include <Libraries/OneWire/OneWire.h>
 
+#include <SmingCore/Wire.h>
+#include <Libraries/DS3232RTC/DS3232RTC.h>
+
 #include <configuration.h> // application configuration
 #include <heatcontrol.h>
 #include <thermostat.h>
@@ -10,6 +13,8 @@
 
 Timer SPITimer;
 Timer HSystemTimer;
+
+String _date_time_str = "";
 
 bool web_ap_started = false;
 
@@ -53,6 +58,10 @@ void init()
 //HSystem.check() timer
 //	HSystem.check();
 	HSystemTimer.initializeMs(2000, HSystem_loop).start();
+
+    Wire.pins(0, 2);
+    Wire.begin();
+    SystemClock.setTime(DSRTC.get());
 }
 
 void HSystem_loop()

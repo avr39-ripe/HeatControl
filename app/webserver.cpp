@@ -93,6 +93,8 @@ void onAJAXGetState(HttpRequest &request, HttpResponse &response)
 //TODO: add temrerature on caldron exit here to display in status
 	json["counter"] = counter;
 	json["mode_curr_temp"] = HSystem._mode_curr_temp;
+	_date_time_str = SystemClock.getSystemTimeString();
+	json["date_time"] = _date_time_str.c_str();
 //	for (byte n = 0; n < NUM_SENSORS; n++)
 //	{
 //		JsonObject& sensor = sensors.createNestedObject();
