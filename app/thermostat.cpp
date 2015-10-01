@@ -6,6 +6,9 @@
 #include <heatcontrol.h>
 #include <thermostat.h>
 
+//OneWire system initialisation
+OneWire ds(ONEWIRE_PIN);
+
 //Room implementation
 Room::Room(uint8_t thermostat_pin, HeatingSystem* heating_system)
 {
@@ -118,6 +121,8 @@ HeatingSystem::HeatingSystem(uint8_t mode_pin, uint8_t caldron_pin)
 		pump->turn_off();
 	this->caldron_turn_off();
 
+	//start OneWire bus
+	ds.begin();
 	//Arm temperature start timer
 	_temp_startTimer.initializeMs(4000, TimerDelegate(&HeatingSystem::_temp_start, this)).start(true);
 }
@@ -280,8 +285,6 @@ void HeatingSystem::_temp_read()
 //	Serial.print("_mode_curr_temp = "); Serial.println(_mode_curr_temp);
 	_temp_readTimer.stop();
 }
-//OneWire system initialisation
-OneWire ds(ONEWIRE_PIN);
 
 //HeatingSystem initialisation
 HeatingSystem HSystem(7, 5);

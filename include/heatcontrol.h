@@ -2,11 +2,14 @@
 #define INCLUDE_HEATCONTROL_H_
 #include <Libraries/OneWire/OneWire.h>
 
+//OneWire stuff
+const uint8_t ONEWIRE_PIN = 4;
+
 //SPI_loop stuff
 const int miso_pin = 12; // 74hc165 data out
 
-const byte reg_in_latch = 4;
-const byte reg_out_latch = 5;
+const byte reg_in_latch = 15;
+const byte reg_out_latch = 16;
 
 const byte num_ch = 16;
 const byte num_reg = num_ch / 8;
@@ -34,9 +37,5 @@ bool getState(uint8_t * reg, int ch, uint8_t active_mode = false);
 int pinState(int ch);
 void setOutState(int ch, uint8_t state);
 bool getOutState(int ch);
-
-//OneWire stuff
-const uint8_t ONEWIRE_PIN = 0;
-extern OneWire ds;
 
 #endif /* INCLUDE_HEATCONTROL_H_ */
