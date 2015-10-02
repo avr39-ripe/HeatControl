@@ -29,6 +29,7 @@ enum pinStates {
 
 extern unsigned long counter;
 extern String _date_time_str;
+extern double sys_TZ;
 
 void print_byte(byte val);
 void SPI_loop();

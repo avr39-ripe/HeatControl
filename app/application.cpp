@@ -15,6 +15,7 @@ Timer SPITimer;
 Timer HSystemTimer;
 
 String _date_time_str = "";
+double sys_TZ = 3;
 
 bool web_ap_started = false;
 
@@ -61,7 +62,9 @@ void init()
 
     Wire.pins(0, 2);
     Wire.begin();
-    SystemClock.setTime(DSRTC.get());
+
+    SystemClock.setTimeZone(sys_TZ);
+    SystemClock.setTime(DSRTC.get(), eTZ_UTC);
 }
 
 void HSystem_loop()
