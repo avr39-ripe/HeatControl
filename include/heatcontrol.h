@@ -1,9 +1,12 @@
 #ifndef INCLUDE_HEATCONTROL_H_
 #define INCLUDE_HEATCONTROL_H_
-#include <Libraries/OneWire/OneWire.h>
 
 //OneWire stuff
-const uint8_t ONEWIRE_PIN = 4;
+const uint8_t onewire_pin = 4;
+
+//I2C stuff
+const uint8_t scl_pin = 0;
+const uint8_t sda_pin = 2;
 
 //SPI_loop stuff
 const int miso_pin = 12; // 74hc165 data out

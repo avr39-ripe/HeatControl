@@ -7,7 +7,7 @@
 #include <thermostat.h>
 
 //OneWire system initialisation
-OneWire ds(ONEWIRE_PIN);
+OneWire ds(onewire_pin);
 
 //Room implementation
 Room::Room(uint8_t thermostat_pin, HeatingSystem* heating_system)

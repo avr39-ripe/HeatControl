@@ -60,9 +60,11 @@ void init()
 //	HSystem.check();
 	HSystemTimer.initializeMs(2000, HSystem_loop).start();
 
-    Wire.pins(0, 2);
+	// I2C bus config and init
+    Wire.pins(scl_pin, sda_pin);
     Wire.begin();
 
+    //Initial setup & sync from DSRTC system clock
     SystemClock.setTimeZone(sys_TZ);
     SystemClock.setTime(DSRTC.get(), eTZ_UTC);
 }
