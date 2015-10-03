@@ -1,6 +1,11 @@
 esp8266
-0 - 1Wire thermometer
+
+0,2 - SCL,SDA of I2C
+4 - OneWire thermometer
+5 - FREE PIN
 12,13,14 - SPI
+15 - reg_in_latch of 74hc165
+16 - reg_out_latch of 74hc959
 
 Shift-out 74hc595
 
