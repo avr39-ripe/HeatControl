@@ -17,14 +17,19 @@ const uint8_t numCircuitTypes = 2;
 //if there is no high_temp or low_temp circuit in this room use NO_PIN for circuit_pin
 const uint8_t NO_PIN = 255;
 
-struct TerminalUnit
-{
-	uint8_t circuit_pin;
-	uint8_t pump_id;
-
-};
-
 class HeatingSystem;
+
+class TerminalUnit
+{
+public:
+	TerminalUnit(uint8_t circuit_pin, uint8_t pump_id, HeatingSystem* heating_system);
+	void turn_on();
+	void turn_off();
+	uint8_t _circuit_pin;
+	uint8_t _pump_id;
+private:
+	HeatingSystem* _heating_system;
+};
 
 class Room
 {
@@ -33,7 +38,7 @@ public:
 	void turn_on();
 	void turn_off();
 	uint8_t _thermostat_pin;
-	TerminalUnit _terminal_units[2];
+	TerminalUnit* _terminal_units[2];
 	uint16_t _room_off_delay;
 private:
 	HeatingSystem* _heating_system;

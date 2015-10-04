@@ -9,41 +9,62 @@
 //OneWire system initialisation
 OneWire ds(onewire_pin);
 
+//TerminalUnit implementation
+TerminalUnit::TerminalUnit(uint8_t circuit_pin, uint8_t pump_id, HeatingSystem* heating_system)
+{
+	this->_circuit_pin = circuit_pin;
+	this->_pump_id = pump_id;
+	this->_heating_system = heating_system;
+}
+
+void TerminalUnit::turn_on()
+{
+//XXX DO NOT CHECK FOR circuit_pin == NO_PIN here! DO IT OUTSIDE BEFORE CALL THIS!!!
+
+	if (getState(out_reg, _circuit_pin) == false) //ensure room is really turned OFF
+	{
+		setState(out_reg, _circuit_pin, true);
+		_heating_system->_pumps[_pump_id]->turn_on();
+		if (_heating_system->_mode & GAS)
+			_heating_system->caldron_turn_on();
+	}
+}
+
+void TerminalUnit::turn_off()
+{
+//XXX DO NOT CHECK FOR circuit_pin == NO_PIN here! DO IT OUTSIDE BEFORE CALL THIS!!!
+
+	if (getState(out_reg, _circuit_pin) == true) //ensure terminal unit is really turned ON
+	{
+		setState(out_reg, _circuit_pin, false);
+		_heating_system->_pumps[_pump_id]->turn_off();
+		if (_heating_system->_mode & GAS)
+			_heating_system->caldron_turn_off();
+	}
+}
+
 //Room implementation
 Room::Room(uint8_t thermostat_pin, HeatingSystem* heating_system)
 {
 	this->_thermostat_pin = thermostat_pin;
 	this->_heating_system = heating_system;
 	this->_room_off_delay = 0;
-//	_terminal_units = Vector<TerminalUnit> (1,1);
 }
 
 
 void Room::turn_on()
 {
-	if (_terminal_units[HIGH_TEMP].circuit_pin != NO_PIN )
+	if (_terminal_units[HIGH_TEMP]->_circuit_pin != NO_PIN )
 	{
-		if (getState(out_reg, _terminal_units[HIGH_TEMP].circuit_pin) == false) //ensure room is really turned OFF
-		{
-			setState(out_reg, _terminal_units[HIGH_TEMP].circuit_pin, true);
-			_heating_system->_pumps[_terminal_units[HIGH_TEMP].pump_id]->turn_on();
-			if (_heating_system->_mode & GAS)
-				_heating_system->caldron_turn_on();
-		}
+		_terminal_units[HIGH_TEMP]->turn_on();
 	}
 }
 
 void Room::turn_off()
 {
-	if (_terminal_units[HIGH_TEMP].circuit_pin != NO_PIN )
+	if (_terminal_units[HIGH_TEMP]->_circuit_pin != NO_PIN )
 	{
-		if (getState(out_reg, _terminal_units[HIGH_TEMP].circuit_pin) == true) //ensure room is really turned OFF
-		{
-			setState(out_reg, _terminal_units[HIGH_TEMP].circuit_pin, false);
-			_heating_system->_pumps[_terminal_units[HIGH_TEMP].pump_id]->turn_off();
-			if (_heating_system->_mode & GAS)
-				_heating_system->caldron_turn_off();
-		}
+		_terminal_units[HIGH_TEMP]->turn_off();
 	}
 }
 //Pump implementation
@@ -108,11 +129,11 @@ HeatingSystem::HeatingSystem(uint8_t mode_pin, uint8_t caldron_pin)
 		this->_rooms[room_id] = new Room(room_id, this);
 	}
 	//assign each room corresponding TUs
-	this->_rooms[0]->_terminal_units[HIGH_TEMP] ={0, PUMP_1};
-	this->_rooms[1]->_terminal_units[HIGH_TEMP] ={1, PUMP_1};
-	this->_rooms[2]->_terminal_units[HIGH_TEMP] ={2, PUMP_1};
-	this->_rooms[3]->_terminal_units[HIGH_TEMP] ={3, PUMP_2};
-	this->_rooms[4]->_terminal_units[HIGH_TEMP] ={4, PUMP_2};
+	this->_rooms[0]->_terminal_units[HIGH_TEMP] = new TerminalUnit(0, PUMP_1, this);
+	this->_rooms[1]->_terminal_units[HIGH_TEMP] = new TerminalUnit(1, PUMP_1, this);
+	this->_rooms[2]->_terminal_units[HIGH_TEMP] = new TerminalUnit(2, PUMP_1, this);
+	this->_rooms[3]->_terminal_units[HIGH_TEMP] = new TerminalUnit(3, PUMP_2, this);
+	this->_rooms[4]->_terminal_units[HIGH_TEMP] = new TerminalUnit(4, PUMP_2, this);
 
 	//Turn everything OFF
 	for (auto room: _rooms)
