@@ -19,7 +19,7 @@ TerminalUnit::TerminalUnit(uint8_t circuit_pin, uint8_t pump_id, HeatingSystem* 
 
 void TerminalUnit::turn_on()
 {
-//XXX DO NOT CHECK FOR circuit_pin == NO_PIN here! DO IT OUTSIDE BEFORE CALL THIS!!!
+//XXX DO NOT CHECK FOR tu == nullptr here! DO IT OUTSIDE BEFORE CALL THIS!!!
 
 	if (getState(out_reg, _circuit_pin) == false) //ensure room is really turned OFF
 	{
@@ -32,7 +32,7 @@ void TerminalUnit::turn_on()
 
 void TerminalUnit::turn_off()
 {
-//XXX DO NOT CHECK FOR circuit_pin == NO_PIN here! DO IT OUTSIDE BEFORE CALL THIS!!!
+//XXX DO NOT CHECK FOR tu == nullptr here! DO IT OUTSIDE BEFORE CALL THIS!!!
 
 	if (getState(out_reg, _circuit_pin) == true) //ensure terminal unit is really turned ON
 	{
@@ -54,7 +54,7 @@ Room::Room(uint8_t thermostat_pin, HeatingSystem* heating_system)
 
 void Room::turn_on()
 {
-	if (_terminal_units[HIGH_TEMP]->_circuit_pin != NO_PIN )
+	if (_terminal_units[HIGH_TEMP] != nullptr )
 	{
 		_terminal_units[HIGH_TEMP]->turn_on();
 	}
@@ -62,7 +62,7 @@ void Room::turn_on()
 
 void Room::turn_off()
 {
-	if (_terminal_units[HIGH_TEMP]->_circuit_pin != NO_PIN )
+	if (_terminal_units[HIGH_TEMP] != nullptr )
 	{
 		_terminal_units[HIGH_TEMP]->turn_off();
 	}
