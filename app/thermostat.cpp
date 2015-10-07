@@ -54,18 +54,52 @@ Room::Room(uint8_t thermostat_pin, HeatingSystem* heating_system)
 
 void Room::turn_on()
 {
-	if (_terminal_units[HIGH_TEMP] != nullptr )
+	if (_heating_system->_mode & WARMY)
 	{
-		_terminal_units[HIGH_TEMP]->turn_on();
+		if (_terminal_units[LOW_TEMP] != nullptr )
+			_terminal_units[LOW_TEMP]->turn_on();
+		else if (_terminal_units[HIGH_TEMP] != nullptr )
+			_terminal_units[HIGH_TEMP]->turn_on();
+	}
+	if ((_heating_system->_mode & WOOD) || (_heating_system->_mode & COLDY))
+	{
+		if (_terminal_units[HIGH_TEMP] != nullptr )
+			_terminal_units[HIGH_TEMP]->turn_on();
+
+		if (_terminal_units[LOW_TEMP] != nullptr )
+			_terminal_units[LOW_TEMP]->turn_on();
 	}
 }
 
 void Room::turn_off()
 {
-	if (_terminal_units[HIGH_TEMP] != nullptr )
+	if (_heating_system->_mode & WARMY)
 	{
-		_terminal_units[HIGH_TEMP]->turn_off();
+		if (_terminal_units[LOW_TEMP] != nullptr )
+			_terminal_units[LOW_TEMP]->turn_off();
+		else if (_terminal_units[HIGH_TEMP] != nullptr )
+			_terminal_units[HIGH_TEMP]->turn_off();
 	}
+	if (_heating_system->_mode & COLDY)
+	{
+		if (_terminal_units[LOW_TEMP] != nullptr )
+			this->_roomTimer.initializeMs(_room_off_delay * 1000, TimerDelegate(&Room::_coldy_lo_t_off_delayed, this)).start(false);
+		if (_terminal_units[HIGH_TEMP] != nullptr )
+			_terminal_units[HIGH_TEMP]->turn_off();
+	}
+	if (_heating_system->_mode & WOOD)
+	{
+		if (_terminal_units[HIGH_TEMP] != nullptr )
+			_terminal_units[HIGH_TEMP]->turn_off();
+
+		if (_terminal_units[LOW_TEMP] != nullptr )
+			_terminal_units[LOW_TEMP]->turn_off();
+	}
+}
+
+void Room::_coldy_lo_t_off_delayed()
+{
+	_terminal_units[LOW_TEMP]->turn_off();
 }
 //Pump implementation
 
@@ -171,11 +205,11 @@ void HeatingSystem::check_mode()
 	}
 	if ((_mode_curr_temp <= ActiveConfig.mode_switch_temp - ActiveConfig.mode_switch_temp_delta) && (_mode & WOOD))
 	{
-		_mode = GAS;
 		for(uint8_t room_id = 0; room_id < numRooms; room_id++)
 		{
 			_rooms[room_id]->turn_off();
 		}
+		_mode = GAS;
 	}
 
 	if ( _mode & GAS)

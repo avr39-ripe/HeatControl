@@ -41,6 +41,7 @@ public:
 	TerminalUnit* _terminal_units[2];
 	uint16_t _room_off_delay;
 private:
+	void _coldy_lo_t_off_delayed();
 	HeatingSystem* _heating_system;
 	Timer _roomTimer;
 	void turn_off_delayed();
