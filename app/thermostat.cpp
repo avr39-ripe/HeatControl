@@ -48,7 +48,9 @@ Room::Room(uint8_t thermostat_pin, HeatingSystem* heating_system)
 {
 	this->_thermostat_pin = thermostat_pin;
 	this->_heating_system = heating_system;
-	this->_room_off_delay = 0;
+	this->_room_off_delay = defaultDelay;
+	this->_terminal_units[HIGH_TEMP] = nullptr;
+	this->_terminal_units[LOW_TEMP] = nullptr;
 }
 
 
@@ -57,7 +59,10 @@ void Room::turn_on()
 	if (_heating_system->_mode & WARMY)
 	{
 		if (_terminal_units[LOW_TEMP] != nullptr )
+		{
+			_roomTimer.stop();
 			_terminal_units[LOW_TEMP]->turn_on();
+		}
 		else if (_terminal_units[HIGH_TEMP] != nullptr )
 			_terminal_units[HIGH_TEMP]->turn_on();
 	}
@@ -67,27 +72,35 @@ void Room::turn_on()
 			_terminal_units[HIGH_TEMP]->turn_on();
 
 		if (_terminal_units[LOW_TEMP] != nullptr )
+		{
+			_roomTimer.stop();
 			_terminal_units[LOW_TEMP]->turn_on();
+		}
 	}
 }
 
 void Room::turn_off()
 {
-	if (_heating_system->_mode & WARMY)
-	{
-		if (_terminal_units[LOW_TEMP] != nullptr )
-			_terminal_units[LOW_TEMP]->turn_off();
-		else if (_terminal_units[HIGH_TEMP] != nullptr )
-			_terminal_units[HIGH_TEMP]->turn_off();
-	}
+//	if (_heating_system->_mode & WARMY)
+//	{
+//		if (_terminal_units[LOW_TEMP] != nullptr )
+//			_terminal_units[LOW_TEMP]->turn_off();
+//		else if (_terminal_units[HIGH_TEMP] != nullptr )
+//			_terminal_units[HIGH_TEMP]->turn_off();
+//	}
 	if (_heating_system->_mode & COLDY)
 	{
-		if (_terminal_units[LOW_TEMP] != nullptr )
-			this->_roomTimer.initializeMs(_room_off_delay * 1000, TimerDelegate(&Room::_coldy_lo_t_off_delayed, this)).start(false);
+		if (_terminal_units[LOW_TEMP] != nullptr)
+		{
+			if ((_terminal_units[LOW_TEMP]->is_on()) && (! this->_roomTimer.isStarted()))
+			{
+				this->_roomTimer.initializeMs(_room_off_delay * 1000, TimerDelegate(&Room::_coldy_lo_t_off_delayed, this)).start(false);
+			}
+		}
 		if (_terminal_units[HIGH_TEMP] != nullptr )
 			_terminal_units[HIGH_TEMP]->turn_off();
 	}
-	if (_heating_system->_mode & WOOD)
+	if ((_heating_system->_mode & WOOD) || (_heating_system->_mode & WARMY))
 	{
 		if (_terminal_units[HIGH_TEMP] != nullptr )
 			_terminal_units[HIGH_TEMP]->turn_off();
@@ -155,8 +168,8 @@ HeatingSystem::HeatingSystem(uint8_t mode_pin, uint8_t caldron_pin)
 	this->_mode_switch_temp = 60;
 	this->_mode_switch_temp_delta = 1;
 	//pumps init
-	this->_pumps[0] = new Pump(6);
-	this->_pumps[1] = new Pump(7);
+	this->_pumps[0] = new Pump(10);
+	this->_pumps[1] = new Pump(11);
 	//rooms init
 	for(uint8_t room_id = 0; room_id < numRooms; room_id++)
 	{
@@ -164,10 +177,19 @@ HeatingSystem::HeatingSystem(uint8_t mode_pin, uint8_t caldron_pin)
 	}
 	//assign each room corresponding TUs
 	this->_rooms[0]->_terminal_units[HIGH_TEMP] = new TerminalUnit(0, PUMP_1, this);
-	this->_rooms[1]->_terminal_units[HIGH_TEMP] = new TerminalUnit(1, PUMP_1, this);
-	this->_rooms[2]->_terminal_units[HIGH_TEMP] = new TerminalUnit(2, PUMP_1, this);
-	this->_rooms[3]->_terminal_units[HIGH_TEMP] = new TerminalUnit(3, PUMP_2, this);
-	this->_rooms[4]->_terminal_units[HIGH_TEMP] = new TerminalUnit(4, PUMP_2, this);
+	this->_rooms[0]->_terminal_units[LOW_TEMP] = new TerminalUnit(1, PUMP_2, this);
+
+	this->_rooms[1]->_terminal_units[HIGH_TEMP] = new TerminalUnit(2, PUMP_1, this);
+	this->_rooms[1]->_terminal_units[LOW_TEMP] = new TerminalUnit(3, PUMP_2, this);
+
+	this->_rooms[2]->_terminal_units[HIGH_TEMP] = new TerminalUnit(4, PUMP_1, this);
+	this->_rooms[2]->_terminal_units[LOW_TEMP] = nullptr;
+
+	this->_rooms[3]->_terminal_units[HIGH_TEMP] = nullptr;
+	this->_rooms[3]->_terminal_units[LOW_TEMP] = new TerminalUnit(5, PUMP_2, this);
+
+	this->_rooms[4]->_terminal_units[HIGH_TEMP] = new TerminalUnit(6, PUMP_1, this);
+	this->_rooms[4]->_terminal_units[LOW_TEMP] = new TerminalUnit(7, PUMP_2, this);
 
 	//Turn everything OFF
 	for (auto room: _rooms)
@@ -342,4 +364,4 @@ void HeatingSystem::_temp_read()
 }
 
 //HeatingSystem initialisation
-HeatingSystem HSystem(7, 5);
+HeatingSystem HSystem(8, 9);
