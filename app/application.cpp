@@ -37,7 +37,7 @@ void init()
 //	WifiStation.waitConnection(connectOk, 20, connectFail); // We recommend 20+ seconds for connection timeout at start
 //	wifi_set_phy_mode(PHY_MODE_11G);
 	web_ap_started = true;
-	WifiAccessPoint.config("HeatConfig", "", AUTH_OPEN);
+	WifiAccessPoint.config("HeatConfig", "20040229", AUTH_WPA2_PSK);
 	WifiAccessPoint.enable(true);
 	startWebServer();
 
