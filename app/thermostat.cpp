@@ -78,6 +78,10 @@ HeatingSystem::HeatingSystem(uint8_t mode_pin, uint8_t caldron_pin)
 	this->_rooms[6]->pump_id = PUMP_2;
 	this->_rooms[7]->pump_id = PUMP_2;
 	this->_rooms[8]->pump_id = PUMP_2;
+
+	//start OneWire bus
+	ds.begin();
+	
 	//Arm temperature start timer
 	_temp_startTimer.initializeMs(4000, TimerDelegate(&HeatingSystem::_temp_start, this)).start(true);
 }
