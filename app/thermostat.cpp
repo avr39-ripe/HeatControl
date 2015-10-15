@@ -58,6 +58,9 @@ HeatingSystem::HeatingSystem(uint8_t mode_pin, uint8_t caldron_pin)
 	this->_mode = GAS;
 	this->_mode_switch_temp = 60;
 	this->_mode_switch_temp_delta = 1;
+	this->_mode_curr_temp = 26.07;
+	this->_temp_accum = 0;
+	this->_temp_counter =0;
 	//pumps init
 	this->_pumps[0] = new Pump(10);
 	this->_pumps[1] = new Pump(11);
@@ -213,18 +216,24 @@ void HeatingSystem::_temp_start()
 {
 	if (!_temp_readTimer.isStarted())
 	{
+		//set 10bit resolution
+		ds.reset();
+		ds.skip();
+		ds.write(0x4e); // write scratchpad cmd
+		ds.write(0xff); // write scratchpad 0
+		ds.write(0xff); // write scratchpad 1
+		ds.write(0b00111111); // write scratchpad config
+
 		ds.reset();
 		ds.skip();
 		ds.write(0x44); // start conversion
 
-		_temp_readTimer.initializeMs(750, TimerDelegate(&HeatingSystem::_temp_read, this)).start(false);
+		_temp_readTimer.initializeMs(190, TimerDelegate(&HeatingSystem::_temp_read, this)).start(false);
 	}
 }
 
 void HeatingSystem::_temp_read()
 {
-
-
 	ds.reset();
 //	ds.select(temp_sensors[n].addr);
 	ds.skip();
@@ -235,8 +244,33 @@ void HeatingSystem::_temp_read()
 		_temp_data[i] = ds.read();
 	}
 
+	if (OneWire::crc8(_temp_data, 8) != _temp_data[8])
+	{
+//		Serial.println("DS18B20 temp crc error!");
+		_temp_counter = 0;
+		_temp_accum = 0;
+		_temp_readTimer.stop();
+		_temp_start();
+		return;
+	}
 	float tempRead = ((_temp_data[1] << 8) | _temp_data[0]); //using two's compliment
-	_mode_curr_temp = tempRead / 16;
+	if (_temp_counter < temp_reads)
+	{
+		_temp_counter++;
+		_temp_accum += (tempRead / 16);
+
+//		Serial.print("TA "); Serial.println(_temp_accum);
+		_temp_readTimer.stop();
+		_temp_start();
+		return;
+	}
+	else
+	{
+		_mode_curr_temp = _temp_accum / temp_reads;
+		_temp_counter = 0;
+		_temp_accum = 0;
+//		Serial.print("MT "); Serial.println(_mode_curr_temp);
+	}
 
 //	Serial.print("_mode_curr_temp = "); Serial.println(_mode_curr_temp);
 	_temp_readTimer.stop();

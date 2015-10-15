@@ -3,6 +3,7 @@
 
 const uint8_t numRooms = 9;
 const uint16_t defaultDelay = 15; //4 * 60 - 4 minutes
+const uint8_t temp_reads = 5;
 
 //HeatingSystem modes
 enum HeatingSystemModes { GAS = 0u, WOOD = 1u };
@@ -63,6 +64,8 @@ private:
 	Timer _temp_startTimer;
 	Timer _temp_readTimer;
 	uint8_t _temp_data[12];
+	float _temp_accum;
+	uint8_t _temp_counter;
 	Room* _rooms[numRooms];
 	Pump* _pumps[2];
 };
