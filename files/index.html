@@ -21,12 +21,15 @@
     <![endif]-->
   </head>
 <script>
+		const Modes = { GAS: 1, WOOD: 2}
 		$( document ).ready(function() {
 			
 			(function worker() {
 				$.getJSON('/state', function(data) {
 					$('#counter').html(data.counter);
 					$('#mode_curr_temp').html(data.mode_curr_temp + ' &deg;C');
+					if (data.mode & Modes.GAS) {$('#mode').html("GAS");}
+					if (data.mode & Modes.WOOD) {$('#mode').html("WOOD");}
 					setTimeout(worker, 5000);
 				});
 			})();
@@ -66,6 +69,16 @@
 						<div class="panel-body">
 							<h1 id="mode_curr_temp" class="text-center main">{mode_temp}
 								&deg;C</h1>
+						</div>
+					</div>
+				</div>
+				<div class="col-xs-10 col-md-5">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">System Mode</h3>
+						</div>
+						<div class="panel-body">
+							<h1 id="mode" class="text-center main">{mode}</h1>
 						</div>
 					</div>
 				</div>

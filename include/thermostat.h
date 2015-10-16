@@ -6,7 +6,7 @@ const uint16_t defaultDelay = 15; //4 * 60 - 4 minutes
 const uint8_t temp_reads = 5;
 
 //HeatingSystem modes
-enum HeatingSystemModes { GAS = 0u, WOOD = 1u };
+enum HeatingSystemModes { GAS = 1u, WOOD = 2u };
 
 //Pump indexes
 enum PumpIndexes {PUMP_1 = 0u, PUMP_2 = 1u };
@@ -49,6 +49,7 @@ public:
 	void check_mode();
 	void check(); //run periodically by timer to check mode and rooms
 	uint16_t _caldron_on_delay;
+	uint8_t _mode;
 	float _mode_switch_temp;
 	float _mode_switch_temp_delta;
 	float _mode_curr_temp;
@@ -56,7 +57,6 @@ private:
 	void _caldron_turn_on_delayed();
 	void _temp_start();
 	void _temp_read();
-	uint8_t _mode;
 	uint8_t _mode_pin;
 	uint8_t _caldron_pin;
 	uint8_t _caldron_consumers = 0;
