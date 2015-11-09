@@ -1,8 +1,10 @@
 #ifndef INCLUDE_HEATCONTROL_H_
 #define INCLUDE_HEATCONTROL_H_
+#include <Libraries/OneWire/OneWire.h>
 
 //OneWire stuff
 const uint8_t onewire_pin = 4;
+extern OneWire ds;
 
 //I2C stuff
 const uint8_t scl_pin = 0;
