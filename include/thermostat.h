@@ -40,7 +40,8 @@ private:
 	void turn_on_delayed();
 	void turn_off_delayed();
 	uint8_t _pump_pin;
-	Timer _pumpTimer;
+	Timer _durationTimer;
+	Timer _intervalTimer;
 };
 
 class TerminalUnit

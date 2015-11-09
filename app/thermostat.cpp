@@ -21,6 +21,8 @@ void HWPump::cycle()
 	turn_on();
 	//Here we have delayed turn off, not immediately!!!
 	turn_off();
+	this->_intervalTimer.initializeMs(this->cycle_interval * 60000, TimerDelegate(&HWPump::cycle, this)).start(false); //cycle_duration in minute so multiple by 60 * 1000 to be in ms.
+
 
 }
 
@@ -31,7 +33,7 @@ void HWPump::turn_on()
 
 void HWPump::turn_off()
 {
-		this->_pumpTimer.initializeMs(this->cycle_duration * 60000, TimerDelegate(&HWPump::turn_off_delayed, this)).start(false); //cycle_duration in minute so multiple by 60 * 1000 to be in ms.
+		this->_durationTimer.initializeMs(this->cycle_duration * 60000, TimerDelegate(&HWPump::turn_off_delayed, this)).start(false); //cycle_interval in minute so multiple by 60 * 1000 to be in ms.
 }
 
 void HWPump::turn_off_delayed()
