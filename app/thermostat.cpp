@@ -16,6 +16,29 @@ HWPump::HWPump(uint8_t pump_pin)
 	this->_pump_pin = pump_pin;
 }
 
+void HWPump::cycle()
+{
+	turn_on();
+	//Here we have delayed turn off, not immediately!!!
+	turn_off();
+
+}
+
+void HWPump::turn_on()
+{
+	setState(out_reg, _pump_pin, true);
+}
+
+void HWPump::turn_off()
+{
+		this->_pumpTimer.initializeMs(this->cycle_duration * 60000, TimerDelegate(&HWPump::turn_off_delayed, this)).start(false); //cycle_duration in minute so multiple by 60 * 1000 to be in ms.
+}
+
+void HWPump::turn_off_delayed()
+{
+	setState(out_reg, _pump_pin, false);
+}
+
 //TerminalUnit implementation
 TerminalUnit::TerminalUnit(uint8_t circuit_pin, uint8_t pump_id, HeatingSystem* heating_system)
 {
