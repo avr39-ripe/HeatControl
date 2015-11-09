@@ -9,6 +9,13 @@
 //OneWire system initialisation
 OneWire ds(onewire_pin);
 
+//HWPump implementation
+
+HWPump::HWPump(uint8_t pump_pin)
+{
+	this->_pump_pin = pump_pin;
+}
+
 //TerminalUnit implementation
 TerminalUnit::TerminalUnit(uint8_t circuit_pin, uint8_t pump_id, HeatingSystem* heating_system)
 {
