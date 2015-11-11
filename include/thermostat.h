@@ -31,8 +31,8 @@ public:
 	void turn_off();
 	void cycle(); // Run one cycle of HWPump turn ON, wait cycle_duration minutes then turn OFF and
 	void check(); // Check whether turn cycle pump
-	TimeElements start_time;
-	TimeElements stop_time;
+	TimeElements _start_time;
+	TimeElements _stop_time;
 	uint8_t cycle_duration; // Duration of pump stay turning on in Minutes
 	uint8_t cycle_interval; // Interval of turning HWPump On for a while in Minutes
 
@@ -106,6 +106,7 @@ public:
 	float _mode_curr_temp;
 	uint8_t _mode;
 	Pump* _pumps[2];
+	HWPump* _hwpump;
 private:
 	void _caldron_turn_on_delayed();
 	void _temp_start();

@@ -18,12 +18,23 @@ HWPump::HWPump(uint8_t pump_pin)
 
 void HWPump::cycle()
 {
-	turn_on();
-	//Here we have delayed turn off, not immediately!!!
-	turn_off();
-	this->_intervalTimer.initializeMs(this->cycle_interval * 60000, TimerDelegate(&HWPump::cycle, this)).start(false); //cycle_duration in minute so multiple by 60 * 1000 to be in ms.
+	DateTime _now = SystemClock.now(eTZ_Local);
+	uint16_t _now_minutes = _now.Hour * 60 + _now.Minute;
+	uint16_t _start_minutes = _start_time.Hour * 60 + _start_time.Minute;
+	uint16_t _stop_minutes = _stop_time.Hour * 60 + _stop_time.Minute;
 
-
+	if ((_now_minutes >= _start_minutes) && (_now_minutes <= _stop_minutes))
+	{
+		Serial.print(_now.toFullDateTimeString()); Serial.println(" Turn HWPump ON! ");
+		turn_on();
+		//Here we have delayed turn off, not immediately!!!
+		turn_off();
+	}
+	else
+	{
+		Serial.print(_now.toFullDateTimeString()); Serial.println(" Sleep time for HWPump! ");
+	}
+	this->_intervalTimer.initializeMs((this->cycle_duration + this->cycle_interval) * 60000, TimerDelegate(&HWPump::cycle, this)).start(false); //cycle_duration in minute so multiple by 60 * 1000 to be in ms.
 }
 
 void HWPump::turn_on()
@@ -202,6 +213,17 @@ HeatingSystem::HeatingSystem(uint8_t mode_pin, uint8_t caldron_pin)
 	this->_mode_curr_temp = 26.07;
 	this->_temp_accum = 0;
 	this->_temp_counter =0;
+	//hwpump init
+	this->_hwpump = new HWPump(15);
+	this->_hwpump->cycle_interval = 60;
+	this->_hwpump->cycle_duration = 5;
+	this->_hwpump->_start_time.Hour = 7;
+	this->_hwpump->_start_time.Minute = 0;
+	this->_hwpump->_stop_time.Hour = 23;
+	this->_hwpump->_stop_time.Minute = 0;
+
+//	this->_hwpump->cycle();
+
 	//pumps init
 	this->_pumps[0] = new Pump(10);
 	this->_pumps[1] = new Pump(11);
@@ -285,14 +307,14 @@ void HeatingSystem::check_mode()
 	}
 
 	//MODE output for debugging
-	if (_mode & GAS)
-		Serial.println("MODE: GAS");
-	if (_mode & WOOD)
-		Serial.println("MODE: WOOD");
-	if (_mode & COLDY)
-		Serial.println("MODE: COLDY");
-	if (_mode & WARMY)
-		Serial.println("MODE: WARMY");
+//	if (_mode & GAS)
+//		Serial.println("MODE: GAS");
+//	if (_mode & WOOD)
+//		Serial.println("MODE: WOOD");
+//	if (_mode & COLDY)
+//		Serial.println("MODE: COLDY");
+//	if (_mode & WARMY)
+//		Serial.println("MODE: WARMY");
 }
 
 void HeatingSystem::caldron_turn_on()

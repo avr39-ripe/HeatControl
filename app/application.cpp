@@ -68,6 +68,9 @@ void init()
     //Initial setup & sync from DSRTC system clock
     SystemClock.setTimeZone(sys_TZ);
     SystemClock.setTime(DSRTC.get(), eTZ_UTC);
+
+    // Start initial HWPump cycle
+    HSystem._hwpump->cycle();
 }
 
 void HSystem_loop()
