@@ -5,8 +5,8 @@
 #include <SmingCore/SmingCore.h>
 
 // Put you SSID and Password here
-const char WIFI_SSID[] = "infjust";
-const char WIFI_PWD[] = "jujust12";
+const char WIFI_SSID[] = "Airport";
+const char WIFI_PWD[] = "vi240776ka";
 
 const char HEAT_CONFIG_FILE[] = ".heat.conf"; // leading point for security reasons :)
 

@@ -20,7 +20,21 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
-
+<script>
+	function get_config() {
+		$.getJSON('/config.json',
+				function(data) {
+					$.each(data, function(key, value){
+                		document.getElementById(key).value = value;
+            		});
+                });
+	}
+	
+	$( document ).ready(function() {
+		get_config();
+	});
+	
+</script>
   <body>
 
     <div class="container">
@@ -47,11 +61,11 @@
 				  <form method="POST">
 					  <div class="form-group">
 						<label>Name</label>
-						<input type="text" name="SSID" class="form-control" placeholder="Enter SSID" value="{SSID}">
+						<input type="text" id="SSID" name="SSID" class="form-control" placeholder="Enter SSID" value="{SSID}">
 					  </div>
 					  <div class="form-group">
-						<label for="exampleInputPassword1">Password</label>
-						<input type="password" name="Password" class="form-control" placeholder="Password">
+						<label for="Password">Password</label>
+						<input type="password" id="Password" name="Password" class="form-control" placeholder="Password">
 					  </div>
 					  <button type="submit" class="btn btn-success">Save network</button>
 					  <button type="cancel" class="btn btn-link">Cancel</button>
@@ -70,23 +84,23 @@
 				  <form method="POST">
 					  <div class="form-group">
 						<label for="mode_switch_temp">Set mode switch temperature, &deg;C</label>
-						<input type="number" required class="form-control" min="20" max="90" step="0.5" id="mode_switch_temp" name="mode_switch_temp" value="{m_s_t}">
+						<input type="number" required class="form-control" min="20" max="90" step="0.5" id="mode_switch_temp" id ="mode_switch_temp" name="mode_switch_temp" value="{m_s_t}">
 					  </div>
 					  <div class="form-group">
 						<label for="mode_switch_temp_delta">Set mode switch temperature delta, &deg;C</label>
-						<input type="number" required class="form-control" min="0.5" max="5" step="0.5" id="mode_switch_temp_delta" name="mode_switch_temp_delta" value="{m_s_t_d}">
+						<input type="number" required class="form-control" min="0.5" max="5" step="0.5" id="mode_switch_temp_delta" id="mode_switch_temp_delta" name="mode_switch_temp_delta" value="{m_s_t_d}">
 					  </div>
 					  <div class="form-group">
 						<label for="pump_on_delay">Pump on delay, sec</label>
-						<input type="number" required class="form-control" min="10" max="600" step="1" id="pump_on_delay" name="pump_on_delay" value="{p_on_d}">
+						<input type="number" required class="form-control" min="10" max="600" step="1" id="pump_on_delay" id="pump_on_delay" name="pump_on_delay" value="{p_on_d}">
 					  </div>
 					  <div class="form-group">
 						<label for="pump_off_delay">Pump off delay, sec</label>
-						<input type="number" required class="form-control" min="10" max="600" step="1" id="pump_off_delay" name="pump_off_delay" value="{p_off_d}">
+						<input type="number" required class="form-control" min="10" max="600" step="1" id="pump_off_delay" id="pump_off_delay" name="pump_off_delay" value="{p_off_d}">
 					  </div>
 					  <div class="form-group">
 						<label for="caldron_on_delay">Caldron on delay, sec</label>
-						<input type="number" required class="form-control" min="10" max="600" step="1" id="caldron_on_delay" name="caldron_on_delay" value="{c_on_d}">
+						<input type="number" required class="form-control" min="10" max="600" step="1" id="caldron_on_delay" id="caldron_on_delay" name="caldron_on_delay" value="{c_on_d}">
 					  </div>
 					  <button type="submit" class="btn btn-success">Save settings</button>
 					  <button type="cancel" class="btn btn-link">Cancel</button>

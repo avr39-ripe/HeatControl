@@ -53,20 +53,21 @@ void onConfiguration(HttpRequest &request, HttpResponse &response)
 		}
 
 		saveConfig(ActiveConfig);
-		response.redirect();
+	//	response.redirect();
 	}
 
-	debugf("Send template");
-	TemplateFileStream *tmpl = new TemplateFileStream("config.html");
-	auto &vars = tmpl->variables();
-	vars["SSID"] = ActiveConfig.NetworkSSID;
-	vars["m_s_t"] = String(ActiveConfig.mode_switch_temp, 2);
-	vars["m_s_t_d"] = String(ActiveConfig.mode_switch_temp_delta, 2);
-	vars["p_on_d"] = String(ActiveConfig.pump_on_delay);
-	vars["p_off_d"] = String(ActiveConfig.pump_off_delay);
-	vars["c_on_d"] = String(ActiveConfig.caldron_on_delay);
+//	debugf("Send template");
+//	TemplateFileStream *tmpl = new TemplateFileStream("config.html");
+//	auto &vars = tmpl->variables();
+//	vars["SSID"] = ActiveConfig.NetworkSSID;
+//	vars["m_s_t"] = String(ActiveConfig.mode_switch_temp, 2);
+//	vars["m_s_t_d"] = String(ActiveConfig.mode_switch_temp_delta, 2);
+//	vars["p_on_d"] = String(ActiveConfig.pump_on_delay);
+//	vars["p_off_d"] = String(ActiveConfig.pump_off_delay);
+//	vars["c_on_d"] = String(ActiveConfig.caldron_on_delay);
 
-	response.sendTemplate(tmpl);
+//	response.sendTemplate(tmpl);
+	response.sendFile("config.html");
 }
 
 void onConfiguration_json(HttpRequest &request, HttpResponse &response)
