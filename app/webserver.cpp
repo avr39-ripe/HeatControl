@@ -69,6 +69,22 @@ void onConfiguration(HttpRequest &request, HttpResponse &response)
 	response.sendTemplate(tmpl);
 }
 
+void onConfiguration_json(HttpRequest &request, HttpResponse &response)
+{
+	JsonObjectStream* stream = new JsonObjectStream();
+	JsonObject& json = stream->getRoot();
+
+	json["SSID"] = ActiveConfig.NetworkSSID;
+	json["Password"] = ActiveConfig.NetworkPassword;
+
+	json["mode_switch_temp"] = ActiveConfig.mode_switch_temp;
+	json["mode_switch_temp_delta"] = ActiveConfig.mode_switch_temp_delta;
+	json["pump_on_delay"] = ActiveConfig.pump_on_delay;
+	json["pump_off_delay"] = ActiveConfig.pump_off_delay;
+	json["caldron_on_delay"] = ActiveConfig.caldron_on_delay;
+
+	response.sendJsonObject(stream);
+}
 void onFile(HttpRequest &request, HttpResponse &response)
 {
 	String file = request.getPath();
@@ -114,6 +130,7 @@ void startWebServer()
 	server.listen(80);
 	server.addPath("/", onIndex);
 	server.addPath("/config", onConfiguration);
+	server.addPath("/config.json", onConfiguration_json);
 	server.addPath("/state", onAJAXGetState);
 	server.setDefaultHandler(onFile);
 	serverStarted = true;
