@@ -20,21 +20,7 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
-<script>
-	function get_config() {
-		$.getJSON('/config.json',
-				function(data) {
-					$.each(data, function(key, value){
-                		document.getElementById(key).value = value;
-            		});
-                });
-	}
-	
-	$( document ).ready(function() {
-		get_config();
-	});
-	
-</script>
+<script src="config.js"></script>
   <body>
 
     <div class="container">
@@ -58,7 +44,7 @@
 				  <h3 class="panel-title">Network</h3>
 				</div>
 				<div class="panel-body">
-				  <form method="POST">
+				  <form id="form_netcfg" method="POST">
 					  <div class="form-group">
 						<label>Name</label>
 						<input type="text" id="SSID" name="SSID" class="form-control" placeholder="Enter SSID" value="{SSID}">
@@ -81,7 +67,7 @@
 				  <h3 class="panel-title">HeatControl Settings</h3>
 				</div>
 				<div class="panel-body">
-				  <form method="POST">
+				  <form id="form_settings" method="POST">
 					  <div class="form-group">
 						<label for="mode_switch_temp">Set mode switch temperature, &deg;C</label>
 						<input type="number" required class="form-control" min="20" max="90" step="0.5" id="mode_switch_temp" id ="mode_switch_temp" name="mode_switch_temp" value="{m_s_t}">
