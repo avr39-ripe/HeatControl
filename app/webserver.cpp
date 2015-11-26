@@ -11,11 +11,13 @@ HttpServer server;
 
 void onIndex(HttpRequest &request, HttpResponse &response)
 {
-	TemplateFileStream *tmpl = new TemplateFileStream("index.html");
-	auto &vars = tmpl->variables();
-	vars["Counter"] = String(counter);
-	vars["mode_temp"] = String(HSystem._mode_curr_temp);
-	response.sendTemplate(tmpl);
+//	TemplateFileStream *tmpl = new TemplateFileStream("index.html");
+//	auto &vars = tmpl->variables();
+//	vars["Counter"] = String(counter);
+//	vars["mode_temp"] = String(HSystem._mode_curr_temp);
+//	response.sendTemplate(tmpl);
+	response.setCache(86400, true); // It's important to use cache for better performance.
+	response.sendFile("index.html");
 }
 
 void onConfiguration(HttpRequest &request, HttpResponse &response)
@@ -55,6 +57,8 @@ void onConfiguration(HttpRequest &request, HttpResponse &response)
 		saveConfig(ActiveConfig);
 	//	response.redirect();
 	}
+	else
+	{
 
 //	debugf("Send template");
 //	TemplateFileStream *tmpl = new TemplateFileStream("config.html");
@@ -67,7 +71,9 @@ void onConfiguration(HttpRequest &request, HttpResponse &response)
 //	vars["c_on_d"] = String(ActiveConfig.caldron_on_delay);
 
 //	response.sendTemplate(tmpl);
-	response.sendFile("config.html");
+		response.setCache(86400, true); // It's important to use cache for better performance.
+		response.sendFile("config.html");
+	}
 }
 
 void onConfiguration_json(HttpRequest &request, HttpResponse &response)
@@ -112,6 +118,7 @@ void onAJAXGetState(HttpRequest &request, HttpResponse &response)
 	json["mode_curr_temp"] = HSystem._mode_curr_temp;
 	_date_time_str = SystemClock.getSystemTimeString();
 	json["date_time"] = _date_time_str.c_str();
+	json["mode"] = HSystem._mode;
 //	for (byte n = 0; n < NUM_SENSORS; n++)
 //	{
 //		JsonObject& sensor = sensors.createNestedObject();

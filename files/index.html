@@ -20,19 +20,7 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
-<script>
-		$( document ).ready(function() {
-			
-			(function worker() {
-				$.getJSON('/state', function(data) {
-					$('#counter').html(data.counter);
-					$('#mode_curr_temp').html(data.mode_curr_temp + ' &deg;C');
-					$('#date_time').html(data.date_time);
-					setTimeout(worker, 5000);
-				});
-			})();
-		});
-	</script>
+<script src="index.js"></script>
   <body>
 
     <div class="container">
@@ -55,7 +43,7 @@
 							<h3 class="panel-title">Counter</h3>
 						</div>
 						<div class="panel-body">
-							<h1 id="counter" class="text-center main">{Counter}</h1>
+							<h1 id="counter" class="text-center main">{counter}</h1>
 						</div>
 					</div>
 				</div>
@@ -77,6 +65,16 @@
 						</div>
 						<div class="panel-body">
 							<h1 id="date_time" class="text-center main">{date_time}</h1>
+						</div>
+					</div>
+				</div>
+				<div class="col-xs-10 col-md-5">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">System Mode</h3>
+						</div>
+						<div class="panel-body">
+							<h1 id="mode" class="text-center main">{mode}</h1>
 						</div>
 					</div>
 				</div>
