@@ -27,4 +27,5 @@ $( document ).ready(function() {
 	get_config();
 	
 	document.getElementById('form_settings').addEventListener('submit', post_config);
+	document.getElementById('settings_cancel').addEventListener('click', get_config);
 });
