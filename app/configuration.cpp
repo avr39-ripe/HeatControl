@@ -26,6 +26,10 @@ HeatConfig loadConfig()
 		cfg.pump_off_delay = settings["pump_off_delay"];
 		cfg.caldron_on_delay = settings["caldron_on_delay"];
 		cfg.room_off_delay = settings["room_off_delay"];
+		cfg.start_minutes = settings["start_minutes"];
+		cfg.stop_minutes = settings["stop_minutes"];
+		cfg.cycle_duration = settings["cycle_duration"];
+		cfg.cycle_interval = settings["cycle_interval"];
 
 		delete[] jsonString;
 	}
@@ -58,6 +62,10 @@ void saveConfig(HeatConfig& cfg)
 	settings["pump_off_delay"] = cfg.pump_off_delay;
 	settings["caldron_on_delay"] = cfg.caldron_on_delay;
 	settings["room_off_delay"] = cfg.room_off_delay;
+	settings["start_minutes"] = cfg.start_minutes;
+	settings["stop_minutes"] = cfg.stop_minutes;
+	settings["cycle_duration"] = cfg.cycle_duration;
+	settings["cycle_interval"] = cfg.cycle_interval;
 
 	char buf[4048];
 	root.prettyPrintTo(buf, sizeof(buf));

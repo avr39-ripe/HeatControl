@@ -16,6 +16,11 @@ struct HeatConfig
 		pump_off_delay = 10; //seconds
 		caldron_on_delay = 10; //seconds
 		room_off_delay = 15; //seconds
+		start_minutes = 480; // minutes since 0:00 to start WHPump cycles
+		stop_minutes = 1380; // minutes since 0:00 to stop WHPump cycles
+		cycle_duration = 5; // Duration of pump stay turning on in minutes
+		cycle_interval = 60; // Interval of turning HWPump On for a while in minutes
+
 	}
 
 	String NetworkSSID;
@@ -28,6 +33,11 @@ struct HeatConfig
 	uint16_t pump_off_delay;
 	uint16_t caldron_on_delay;
 	uint16_t room_off_delay;
+	uint16_t start_minutes;
+	uint16_t stop_minutes;
+	uint8_t cycle_duration;
+	uint8_t cycle_interval;
+
 };
 
 HeatConfig loadConfig();

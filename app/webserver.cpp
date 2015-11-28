@@ -11,11 +11,6 @@ HttpServer server;
 
 void onIndex(HttpRequest &request, HttpResponse &response)
 {
-//	TemplateFileStream *tmpl = new TemplateFileStream("index.html");
-//	auto &vars = tmpl->variables();
-//	vars["Counter"] = String(counter);
-//	vars["mode_temp"] = String(HSystem._mode_curr_temp);
-//	response.sendTemplate(tmpl);
 	response.setCache(86400, true); // It's important to use cache for better performance.
 	response.sendFile("index.html");
 }
@@ -40,19 +35,14 @@ void onConfiguration(HttpRequest &request, HttpResponse &response)
 			ActiveConfig.pump_off_delay = request.getPostParameter("pump_off_delay").toInt();
 			ActiveConfig.caldron_on_delay = request.getPostParameter("caldron_on_delay").toInt();
 			ActiveConfig.room_off_delay = request.getPostParameter("room_off_delay").toInt();
-
-//			DynamicJsonBuffer jsonBuffer;
-//			JsonObject& root = jsonBuffer.createObject();
-//
-//			JsonObject& settings = jsonBuffer.createObject();
-//			root["settings"] = settings;
-//			settings["set_temp"] = ActiveConfig.set_temp;
-//			settings["temp_delta"] = ActiveConfig.temp_delta;
-//			settings["temp_interval"] = ActiveConfig.temp_interval;
-//			settings["switch_interval"] = ActiveConfig.switch_interval;
-//
-//			root.printTo(Serial);
-//			Serial.println();
+		}
+		if (request.getPostParameter("start_minutes").length() > 0) // Settings
+		{
+			ActiveConfig.start_minutes = request.getPostParameter("start_minutes").toInt();
+			ActiveConfig.stop_minutes = request.getPostParameter("stop_minutes").toInt();
+			ActiveConfig.cycle_duration = request.getPostParameter("cycle_duration").toInt();
+			ActiveConfig.cycle_interval = request.getPostParameter("cycle_interval").toInt();
+			HSystem._hwpump->cycle();
 		}
 
 		saveConfig(ActiveConfig);
@@ -60,18 +50,6 @@ void onConfiguration(HttpRequest &request, HttpResponse &response)
 	}
 	else
 	{
-
-//	debugf("Send template");
-//	TemplateFileStream *tmpl = new TemplateFileStream("config.html");
-//	auto &vars = tmpl->variables();
-//	vars["SSID"] = ActiveConfig.NetworkSSID;
-//	vars["m_s_t"] = String(ActiveConfig.mode_switch_temp, 2);
-//	vars["m_s_t_d"] = String(ActiveConfig.mode_switch_temp_delta, 2);
-//	vars["p_on_d"] = String(ActiveConfig.pump_on_delay);
-//	vars["p_off_d"] = String(ActiveConfig.pump_off_delay);
-//	vars["c_on_d"] = String(ActiveConfig.caldron_on_delay);
-
-//	response.sendTemplate(tmpl);
 		response.setCache(86400, true); // It's important to use cache for better performance.
 		response.sendFile("config.html");
 	}
@@ -91,6 +69,10 @@ void onConfiguration_json(HttpRequest &request, HttpResponse &response)
 	json["pump_off_delay"] = ActiveConfig.pump_off_delay;
 	json["caldron_on_delay"] = ActiveConfig.caldron_on_delay;
 	json["room_off_delay"] = ActiveConfig.room_off_delay;
+	json["start_minutes"] = ActiveConfig.start_minutes;
+	json["stop_minutes"] = ActiveConfig.stop_minutes;
+	json["cycle_duration"] = ActiveConfig.cycle_duration;
+	json["cycle_interval"] = ActiveConfig.cycle_interval;
 
 	response.sendJsonObject(stream);
 }
@@ -113,22 +95,13 @@ void onAJAXGetState(HttpRequest &request, HttpResponse &response)
 {
 	JsonObjectStream* stream = new JsonObjectStream();
 	JsonObject& json = stream->getRoot();
-//	JsonArray& sensors = json.createNestedArray("sensors");
 
-//TODO: add temrerature on caldron exit here to display in status
 	json["counter"] = counter;
 	json["mode_curr_temp"] = HSystem._mode_curr_temp;
 	_date_time_str = SystemClock.getSystemTimeString();
 	json["date_time"] = _date_time_str.c_str();
 	json["mode"] = HSystem._mode;
-//	for (byte n = 0; n < NUM_SENSORS; n++)
-//	{
-//		JsonObject& sensor = sensors.createNestedObject();
-//		sensor["name"] = temp_sensors[n].addr_str;
-//		sensor["temp"] = temp_sensors[n].value;
-//		sensor["state"] = relay_pins[n].state;
-//	}
-//
+
 	response.sendJsonObject(stream);
 }
 

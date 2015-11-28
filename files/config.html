@@ -98,9 +98,39 @@
 				</div>
 			  </div>
 			</div>
+<!-- HWPump config -->
+		<div>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">Hot Water Pump</h3>
+				</div>
+				<div class="panel-body">
+					<form id="form_hwpump" method="POST">
+						<div class="form-group">
+							<label for="start_minutes">Start time, minutes from 0:00</label>
+							<input type="number" required class="form-control" min="0" max="1439" step="1" id="start_minutes" name="start_minutes">
+						</div>
+						<div class="form-group">
+							<label for="stop_minutes">Stop time, minutes from 0:00</label>
+							<input type="number" required class="form-control" min="0" max="1439" step="1" id="stop_minutes" name="stop_minutes">
+						</div>
+						<div class="form-group">
+							<label for="cycle_duration">Cycle duration, minutes</label>
+							<input type="number" required class="form-control" min="1" max="60" step="1" id="cycle_duration" name="cycle_duration">
+						</div>
+						<div class="form-group">
+							<label for="cycle_interval">Cycle interval, minutes</label>
+							<input type="number" required class="form-control" min="5" max="1380" step="1" id="cycle_interval" name="cycle_interval">
+						</div>
+						<button type="submit" class="btn btn-success">Save settings</button>
+						<button type="button" id="hwpump_cancel" class="btn btn-link">Cancel</button>
+					</form>
+				</div>
+			</div>
+		</div>
 		</div>
       </div>
 
-    </div> <!-- /container -->
+	</div> <!-- /container -->
   </body>
 </html>

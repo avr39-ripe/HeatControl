@@ -21,7 +21,7 @@ void HWPump::cycle()
 	DateTime _now = SystemClock.now(eTZ_Local);
 	uint16_t _now_minutes = _now.Hour * 60 + _now.Minute;
 
-	if ((_now_minutes >= _start_minutes) && (_now_minutes <= _stop_minutes))
+	if ((_now_minutes >= ActiveConfig.start_minutes) && (_now_minutes <= ActiveConfig.stop_minutes))
 	{
 		Serial.print(_now.toFullDateTimeString()); Serial.println(" Turn HWPump ON! ");
 		turn_on();
@@ -32,7 +32,7 @@ void HWPump::cycle()
 	{
 		Serial.print(_now.toFullDateTimeString()); Serial.println(" Sleep time for HWPump! ");
 	}
-	this->_intervalTimer.initializeMs((this->_cycle_duration + this->_cycle_interval) * 60000, TimerDelegate(&HWPump::cycle, this)).start(false); //cycle_duration in minute so multiple by 60 * 1000 to be in ms.
+	this->_intervalTimer.initializeMs((ActiveConfig.cycle_interval) * 60000, TimerDelegate(&HWPump::cycle, this)).start(false); //cycle_duration in minute so multiple by 60 * 1000 to be in ms.
 }
 
 void HWPump::turn_on()
@@ -42,7 +42,7 @@ void HWPump::turn_on()
 
 void HWPump::turn_off()
 {
-		this->_durationTimer.initializeMs(this->_cycle_duration * 60000, TimerDelegate(&HWPump::turn_off_delayed, this)).start(false); //cycle_interval in minute so multiple by 60 * 1000 to be in ms.
+		this->_durationTimer.initializeMs(ActiveConfig.cycle_duration * 60000, TimerDelegate(&HWPump::turn_off_delayed, this)).start(false); //cycle_interval in minute so multiple by 60 * 1000 to be in ms.
 }
 
 void HWPump::turn_off_delayed()
