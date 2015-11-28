@@ -14,7 +14,8 @@ function post_config(event) {
 			'mode_switch_temp_delta'	:	document.getElementById('mode_switch_temp_delta').value,
 			'pump_on_delay'				:	document.getElementById('pump_on_delay').value,
 			'pump_off_delay'			:	document.getElementById('pump_off_delay').value,
-			'caldron_on_delay'			:	document.getElementById('caldron_on_delay').value
+			'caldron_on_delay'			:	document.getElementById('caldron_on_delay').value,
+			'room_off_delay'			:	document.getElementById('room_off_delay').value
 			};
 	$.ajax({
         type        : 'POST',

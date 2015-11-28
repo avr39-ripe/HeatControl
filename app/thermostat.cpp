@@ -137,7 +137,7 @@ void Room::turn_off()
 		{
 			if ((_terminal_units[LOW_TEMP]->is_on()) && (! this->_roomTimer.isStarted()))
 			{
-				this->_roomTimer.initializeMs(_room_off_delay * 1000, TimerDelegate(&Room::_coldy_lo_t_off_delayed, this)).start(false);
+				this->_roomTimer.initializeMs(ActiveConfig.room_off_delay * 1000, TimerDelegate(&Room::_coldy_lo_t_off_delayed, this)).start(false);
 			}
 		}
 		if (_terminal_units[HIGH_TEMP] != nullptr )

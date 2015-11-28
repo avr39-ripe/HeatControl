@@ -15,6 +15,7 @@ struct HeatConfig
 		pump_on_delay = 10; //seconds
 		pump_off_delay = 10; //seconds
 		caldron_on_delay = 10; //seconds
+		room_off_delay = 15; //seconds
 	}
 
 	String NetworkSSID;
@@ -26,6 +27,7 @@ struct HeatConfig
 	uint16_t pump_on_delay;
 	uint16_t pump_off_delay;
 	uint16_t caldron_on_delay;
+	uint16_t room_off_delay;
 };
 
 HeatConfig loadConfig();

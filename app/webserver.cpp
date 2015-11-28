@@ -39,6 +39,7 @@ void onConfiguration(HttpRequest &request, HttpResponse &response)
 			ActiveConfig.pump_on_delay = request.getPostParameter("pump_on_delay").toInt();
 			ActiveConfig.pump_off_delay = request.getPostParameter("pump_off_delay").toInt();
 			ActiveConfig.caldron_on_delay = request.getPostParameter("caldron_on_delay").toInt();
+			ActiveConfig.room_off_delay = request.getPostParameter("room_off_delay").toInt();
 
 //			DynamicJsonBuffer jsonBuffer;
 //			JsonObject& root = jsonBuffer.createObject();
@@ -89,6 +90,7 @@ void onConfiguration_json(HttpRequest &request, HttpResponse &response)
 	json["pump_on_delay"] = ActiveConfig.pump_on_delay;
 	json["pump_off_delay"] = ActiveConfig.pump_off_delay;
 	json["caldron_on_delay"] = ActiveConfig.caldron_on_delay;
+	json["room_off_delay"] = ActiveConfig.room_off_delay;
 
 	response.sendJsonObject(stream);
 }

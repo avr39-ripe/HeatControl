@@ -69,24 +69,28 @@
 				<div class="panel-body">
 				  <form id="form_settings" method="POST">
 					  <div class="form-group">
-						<label for="mode_switch_temp">Set mode switch temperature, &deg;C</label>
-						<input type="number" required class="form-control" min="20" max="90" step="0.5" id="mode_switch_temp" id ="mode_switch_temp" name="mode_switch_temp" value="{m_s_t}">
+						<label for="mode_switch_temp">Set switch temperature for Wood mode, &deg;C</label>
+						<input type="number" required class="form-control" min="20" max="90" step="0.5" id ="mode_switch_temp" name="mode_switch_temp" value="{m_s_t}">
 					  </div>
 					  <div class="form-group">
-						<label for="mode_switch_temp_delta">Set mode switch temperature delta, &deg;C</label>
-						<input type="number" required class="form-control" min="0.5" max="5" step="0.5" id="mode_switch_temp_delta" id="mode_switch_temp_delta" name="mode_switch_temp_delta" value="{m_s_t_d}">
+						<label for="mode_switch_temp_delta">Set switch temperature delta for Wood mode, &deg;C</label>
+						<input type="number" required class="form-control" min="0.5" max="5" step="0.5" id="mode_switch_temp_delta" name="mode_switch_temp_delta" value="{m_s_t_d}">
 					  </div>
 					  <div class="form-group">
 						<label for="pump_on_delay">Pump on delay, sec</label>
-						<input type="number" required class="form-control" min="10" max="600" step="1" id="pump_on_delay" id="pump_on_delay" name="pump_on_delay" value="{p_on_d}">
+						<input type="number" required class="form-control" min="10" max="600" step="1" id="pump_on_delay" name="pump_on_delay" value="{p_on_d}">
 					  </div>
 					  <div class="form-group">
 						<label for="pump_off_delay">Pump off delay, sec</label>
-						<input type="number" required class="form-control" min="10" max="600" step="1" id="pump_off_delay" id="pump_off_delay" name="pump_off_delay" value="{p_off_d}">
+						<input type="number" required class="form-control" min="10" max="600" step="1" id="pump_off_delay" name="pump_off_delay" value="{p_off_d}">
 					  </div>
 					  <div class="form-group">
 						<label for="caldron_on_delay">Caldron on delay, sec</label>
-						<input type="number" required class="form-control" min="10" max="600" step="1" id="caldron_on_delay" id="caldron_on_delay" name="caldron_on_delay" value="{c_on_d}">
+						<input type="number" required class="form-control" min="10" max="600" step="1" id="caldron_on_delay" name="caldron_on_delay" value="{c_on_d}">
+					  </div>
+					  <div class="form-group">
+						<label for="room_off_delay">Warm floor off delay in Coldy mode, sec</label>
+						<input type="number" required class="form-control" min="15" max="7200" step="1" id="room_off_delay" name="room_off_delay" value="{room_off_delay}">
 					  </div>
 					  <button type="submit" class="btn btn-success">Save settings</button>
 					  <button type="button" id="settings_cancel" class="btn btn-link">Cancel</button>
