@@ -2,7 +2,7 @@
 #define INCLUDE_THERMOSTAT_H_
 
 //TODO: HACK! Need to be replaced by Time.h from recent arduino!!
-#include <Libraries/DS3232RTC/DS3232RTC.h>
+//#include <Libraries/DS3232RTC/DS3232RTC.h>
 
 const uint8_t numRooms = 5;
 const uint16_t defaultDelay = 15; //4 * 60 - 4 minutes
@@ -31,10 +31,10 @@ public:
 	void turn_off();
 	void cycle(); // Run one cycle of HWPump turn ON, wait cycle_duration minutes then turn OFF and
 	void check(); // Check whether turn cycle pump
-	TimeElements _start_time;
-	TimeElements _stop_time;
-	uint8_t cycle_duration; // Duration of pump stay turning on in Minutes
-	uint8_t cycle_interval; // Interval of turning HWPump On for a while in Minutes
+	uint16_t _start_minutes; // minutes since 0:00 to start WHPump cycles
+	uint16_t _stop_minutes; // minutes since 0:00 to stop WHPump cycles
+	uint8_t _cycle_duration; // Duration of pump stay turning on in Minutes
+	uint8_t _cycle_interval; // Interval of turning HWPump On for a while in Minutes
 
 private:
 	void turn_on_delayed();

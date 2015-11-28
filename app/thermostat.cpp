@@ -20,8 +20,6 @@ void HWPump::cycle()
 {
 	DateTime _now = SystemClock.now(eTZ_Local);
 	uint16_t _now_minutes = _now.Hour * 60 + _now.Minute;
-	uint16_t _start_minutes = _start_time.Hour * 60 + _start_time.Minute;
-	uint16_t _stop_minutes = _stop_time.Hour * 60 + _stop_time.Minute;
 
 	if ((_now_minutes >= _start_minutes) && (_now_minutes <= _stop_minutes))
 	{
@@ -34,7 +32,7 @@ void HWPump::cycle()
 	{
 		Serial.print(_now.toFullDateTimeString()); Serial.println(" Sleep time for HWPump! ");
 	}
-	this->_intervalTimer.initializeMs((this->cycle_duration + this->cycle_interval) * 60000, TimerDelegate(&HWPump::cycle, this)).start(false); //cycle_duration in minute so multiple by 60 * 1000 to be in ms.
+	this->_intervalTimer.initializeMs((this->_cycle_duration + this->_cycle_interval) * 60000, TimerDelegate(&HWPump::cycle, this)).start(false); //cycle_duration in minute so multiple by 60 * 1000 to be in ms.
 }
 
 void HWPump::turn_on()
@@ -44,7 +42,7 @@ void HWPump::turn_on()
 
 void HWPump::turn_off()
 {
-		this->_durationTimer.initializeMs(this->cycle_duration * 60000, TimerDelegate(&HWPump::turn_off_delayed, this)).start(false); //cycle_interval in minute so multiple by 60 * 1000 to be in ms.
+		this->_durationTimer.initializeMs(this->_cycle_duration * 60000, TimerDelegate(&HWPump::turn_off_delayed, this)).start(false); //cycle_interval in minute so multiple by 60 * 1000 to be in ms.
 }
 
 void HWPump::turn_off_delayed()
@@ -215,12 +213,10 @@ HeatingSystem::HeatingSystem(uint8_t mode_pin, uint8_t caldron_pin)
 	this->_temp_counter =0;
 	//hwpump init
 	this->_hwpump = new HWPump(15);
-	this->_hwpump->cycle_interval = 60;
-	this->_hwpump->cycle_duration = 5;
-	this->_hwpump->_start_time.Hour = 7;
-	this->_hwpump->_start_time.Minute = 0;
-	this->_hwpump->_stop_time.Hour = 23;
-	this->_hwpump->_stop_time.Minute = 0;
+	this->_hwpump->_cycle_interval = 60; // in minutes
+	this->_hwpump->_cycle_duration = 5; // in minutes
+	this->_hwpump->_start_minutes = 420; // 7 * 60 = 7:00
+	this->_hwpump->_stop_minutes = 1380; // 23 * 60 = 23:00
 
 //	this->_hwpump->cycle();
 
