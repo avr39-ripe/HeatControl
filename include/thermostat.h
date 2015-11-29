@@ -1,8 +1,12 @@
 #ifndef INCLUDE_THERMOSTAT_H_
 #define INCLUDE_THERMOSTAT_H_
 
+//TODO: HACK! Need to be replaced by Time.h from recent arduino!!
+//#include <Libraries/DS3232RTC/DS3232RTC.h>
+
 const uint8_t numRooms = 5;
 const uint16_t defaultDelay = 15; //4 * 60 - 4 minutes
+const uint8_t temp_reads = 5;
 
 //HeatingSystem modes
 enum HeatingSystemModes { GAS = 1u, WOOD = 2u , WARMY = 4u, COLDY = 8u};
@@ -18,6 +22,27 @@ const uint8_t numCircuitTypes = 2;
 const uint8_t NO_PIN = 255;
 
 class HeatingSystem;
+
+class HWPump
+{
+public:
+	HWPump(uint8_t pump_pin);
+	void turn_on();
+	void turn_off();
+	void cycle(); // Run one cycle of HWPump turn ON, wait cycle_duration minutes then turn OFF and
+	void check(); // Check whether turn cycle pump
+	uint16_t _start_minutes; // minutes since 0:00 to start WHPump cycles
+	uint16_t _stop_minutes; // minutes since 0:00 to stop WHPump cycles
+	uint8_t _cycle_duration; // Duration of pump stay turning on in Minutes
+	uint8_t _cycle_interval; // Interval of turning HWPump On for a while in Minutes
+
+private:
+	void turn_on_delayed();
+	void turn_off_delayed();
+	uint8_t _pump_pin;
+	Timer _durationTimer;
+	Timer _intervalTimer;
+};
 
 class TerminalUnit
 {
@@ -81,6 +106,7 @@ public:
 	float _mode_curr_temp;
 	uint8_t _mode;
 	Pump* _pumps[2];
+	HWPump* _hwpump;
 private:
 	void _caldron_turn_on_delayed();
 	void _temp_start();
@@ -92,6 +118,8 @@ private:
 	Timer _temp_startTimer;
 	Timer _temp_readTimer;
 	uint8_t _temp_data[12];
+	float _temp_accum;
+	uint8_t _temp_counter;
 	Room* _rooms[numRooms];
 
 };

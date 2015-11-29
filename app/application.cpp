@@ -15,7 +15,7 @@ Timer SPITimer;
 Timer HSystemTimer;
 
 String _date_time_str = "";
-double sys_TZ = 3;
+//double sys_TZ = 3;
 
 bool web_ap_started = false;
 
@@ -27,6 +27,7 @@ void HSystem_loop();
 
 void init()
 {
+	spiffs_mount(); // Mount file system, in order to work with files
 	Serial.begin(SERIAL_BAUD_RATE); // 115200 by default
 	Serial.systemDebugOutput(false); // Debug output to serial
 	Serial.commandProcessing(false);
@@ -65,8 +66,11 @@ void init()
     Wire.begin();
 
     //Initial setup & sync from DSRTC system clock
-    SystemClock.setTimeZone(sys_TZ);
+    SystemClock.setTimeZone(ActiveConfig.time_zone);
     SystemClock.setTime(DSRTC.get(), eTZ_UTC);
+
+    // Start initial HWPump cycle
+    HSystem._hwpump->cycle();
 }
 
 void HSystem_loop()

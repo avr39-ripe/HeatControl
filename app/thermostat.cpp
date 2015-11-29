@@ -9,6 +9,47 @@
 //OneWire system initialisation
 OneWire ds(onewire_pin);
 
+//HWPump implementation
+
+HWPump::HWPump(uint8_t pump_pin)
+{
+	this->_pump_pin = pump_pin;
+}
+
+void HWPump::cycle()
+{
+	DateTime _now = SystemClock.now(eTZ_Local);
+	uint16_t _now_minutes = _now.Hour * 60 + _now.Minute;
+
+	if ((_now_minutes >= ActiveConfig.start_minutes) && (_now_minutes <= ActiveConfig.stop_minutes))
+	{
+		Serial.print(_now.toFullDateTimeString()); Serial.println(" Turn HWPump ON! ");
+		turn_on();
+		//Here we have delayed turn off, not immediately!!!
+		turn_off();
+	}
+	else
+	{
+		Serial.print(_now.toFullDateTimeString()); Serial.println(" Sleep time for HWPump! ");
+	}
+	this->_intervalTimer.initializeMs((ActiveConfig.cycle_interval) * 60000, TimerDelegate(&HWPump::cycle, this)).start(false); //cycle_duration in minute so multiple by 60 * 1000 to be in ms.
+}
+
+void HWPump::turn_on()
+{
+	setState(out_reg, _pump_pin, true);
+}
+
+void HWPump::turn_off()
+{
+		this->_durationTimer.initializeMs(ActiveConfig.cycle_duration * 60000, TimerDelegate(&HWPump::turn_off_delayed, this)).start(false); //cycle_interval in minute so multiple by 60 * 1000 to be in ms.
+}
+
+void HWPump::turn_off_delayed()
+{
+	setState(out_reg, _pump_pin, false);
+}
+
 //TerminalUnit implementation
 TerminalUnit::TerminalUnit(uint8_t circuit_pin, uint8_t pump_id, HeatingSystem* heating_system)
 {
@@ -94,7 +135,7 @@ void Room::turn_off()
 		{
 			if ((_terminal_units[LOW_TEMP]->is_on()) && (! this->_roomTimer.isStarted()))
 			{
-				this->_roomTimer.initializeMs(_room_off_delay * 1000, TimerDelegate(&Room::_coldy_lo_t_off_delayed, this)).start(false);
+				this->_roomTimer.initializeMs(ActiveConfig.room_off_delay * 1000, TimerDelegate(&Room::_coldy_lo_t_off_delayed, this)).start(false);
 			}
 		}
 		if (_terminal_units[HIGH_TEMP] != nullptr )
@@ -167,6 +208,18 @@ HeatingSystem::HeatingSystem(uint8_t mode_pin, uint8_t caldron_pin)
 	this->_mode = GAS;
 	this->_mode_switch_temp = 60;
 	this->_mode_switch_temp_delta = 1;
+	this->_mode_curr_temp = 26.07;
+	this->_temp_accum = 0;
+	this->_temp_counter =0;
+	//hwpump init
+	this->_hwpump = new HWPump(15);
+	this->_hwpump->_cycle_interval = 60; // in minutes
+	this->_hwpump->_cycle_duration = 5; // in minutes
+	this->_hwpump->_start_minutes = 420; // 7 * 60 = 7:00
+	this->_hwpump->_stop_minutes = 1380; // 23 * 60 = 23:00
+
+//	this->_hwpump->cycle();
+
 	//pumps init
 	this->_pumps[0] = new Pump(10);
 	this->_pumps[1] = new Pump(11);
@@ -250,14 +303,14 @@ void HeatingSystem::check_mode()
 	}
 
 	//MODE output for debugging
-	if (_mode & GAS)
-		Serial.println("MODE: GAS");
-	if (_mode & WOOD)
-		Serial.println("MODE: WOOD");
-	if (_mode & COLDY)
-		Serial.println("MODE: COLDY");
-	if (_mode & WARMY)
-		Serial.println("MODE: WARMY");
+//	if (_mode & GAS)
+//		Serial.println("MODE: GAS");
+//	if (_mode & WOOD)
+//		Serial.println("MODE: WOOD");
+//	if (_mode & COLDY)
+//		Serial.println("MODE: COLDY");
+//	if (_mode & WARMY)
+//		Serial.println("MODE: WARMY");
 }
 
 void HeatingSystem::caldron_turn_on()
@@ -334,18 +387,24 @@ void HeatingSystem::_temp_start()
 {
 	if (!_temp_readTimer.isStarted())
 	{
+		//set 10bit resolution
+		ds.reset();
+		ds.skip();
+		ds.write(0x4e); // write scratchpad cmd
+		ds.write(0xff); // write scratchpad 0
+		ds.write(0xff); // write scratchpad 1
+		ds.write(0b00111111); // write scratchpad config
+
 		ds.reset();
 		ds.skip();
 		ds.write(0x44); // start conversion
 
-		_temp_readTimer.initializeMs(750, TimerDelegate(&HeatingSystem::_temp_read, this)).start(false);
+		_temp_readTimer.initializeMs(190, TimerDelegate(&HeatingSystem::_temp_read, this)).start(false);
 	}
 }
 
 void HeatingSystem::_temp_read()
 {
-
-
 	ds.reset();
 //	ds.select(temp_sensors[n].addr);
 	ds.skip();
@@ -356,8 +415,33 @@ void HeatingSystem::_temp_read()
 		_temp_data[i] = ds.read();
 	}
 
+	if (OneWire::crc8(_temp_data, 8) != _temp_data[8])
+	{
+//		Serial.println("DS18B20 temp crc error!");
+		_temp_counter = 0;
+		_temp_accum = 0;
+		_temp_readTimer.stop();
+		_temp_start();
+		return;
+	}
 	float tempRead = ((_temp_data[1] << 8) | _temp_data[0]); //using two's compliment
-	_mode_curr_temp = tempRead / 16;
+	if (_temp_counter < temp_reads)
+	{
+		_temp_counter++;
+		_temp_accum += (tempRead / 16);
+
+//		Serial.print("TA "); Serial.println(_temp_accum);
+		_temp_readTimer.stop();
+		_temp_start();
+		return;
+	}
+	else
+	{
+		_mode_curr_temp = _temp_accum / temp_reads;
+		_temp_counter = 0;
+		_temp_accum = 0;
+//		Serial.print("MT "); Serial.println(_mode_curr_temp);
+	}
 
 //	Serial.print("_mode_curr_temp = "); Serial.println(_mode_curr_temp);
 	_temp_readTimer.stop();

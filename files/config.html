@@ -20,7 +20,7 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
-
+<script src="config.js"></script>
   <body>
 
     <div class="container">
@@ -44,14 +44,14 @@
 				  <h3 class="panel-title">Network</h3>
 				</div>
 				<div class="panel-body">
-				  <form method="POST">
+				  <form id="form_netcfg" method="POST">
 					  <div class="form-group">
 						<label>Name</label>
-						<input type="text" name="SSID" class="form-control" placeholder="Enter SSID" value="{SSID}">
+						<input type="text" id="SSID" name="SSID" class="form-control" placeholder="Enter SSID" value="{SSID}">
 					  </div>
 					  <div class="form-group">
-						<label for="exampleInputPassword1">Password</label>
-						<input type="password" name="Password" class="form-control" placeholder="Password">
+						<label for="Password">Password</label>
+						<input type="password" id="Password" name="Password" class="form-control" placeholder="Password">
 					  </div>
 					  <button type="submit" class="btn btn-success">Save network</button>
 					  <button type="cancel" class="btn btn-link">Cancel</button>
@@ -67,13 +67,13 @@
 				  <h3 class="panel-title">HeatControl Settings</h3>
 				</div>
 				<div class="panel-body">
-				  <form method="POST">
+				  <form id="form_settings" method="POST">
 					  <div class="form-group">
-						<label for="mode_switch_temp">Set mode switch temperature, &deg;C</label>
-						<input type="number" required class="form-control" min="20" max="90" step="0.5" id="mode_switch_temp" name="mode_switch_temp" value="{m_s_t}">
+						<label for="mode_switch_temp">Set switch temperature for Wood mode, &deg;C</label>
+						<input type="number" required class="form-control" min="20" max="90" step="0.5" id ="mode_switch_temp" name="mode_switch_temp" value="{m_s_t}">
 					  </div>
 					  <div class="form-group">
-						<label for="mode_switch_temp_delta">Set mode switch temperature delta, &deg;C</label>
+						<label for="mode_switch_temp_delta">Set switch temperature delta for Wood mode, &deg;C</label>
 						<input type="number" required class="form-control" min="0.5" max="5" step="0.5" id="mode_switch_temp_delta" name="mode_switch_temp_delta" value="{m_s_t_d}">
 					  </div>
 					  <div class="form-group">
@@ -88,15 +88,61 @@
 						<label for="caldron_on_delay">Caldron on delay, sec</label>
 						<input type="number" required class="form-control" min="10" max="600" step="1" id="caldron_on_delay" name="caldron_on_delay" value="{c_on_d}">
 					  </div>
+					  <div class="form-group">
+						<label for="room_off_delay">Warm floor off delay in Coldy mode, sec</label>
+						<input type="number" required class="form-control" min="15" max="7200" step="1" id="room_off_delay" name="room_off_delay" value="{room_off_delay}">
+					  </div>
 					  <button type="submit" class="btn btn-success">Save settings</button>
-					  <button type="cancel" class="btn btn-link">Cancel</button>
+					  <button type="button" id="settings_cancel" class="btn btn-link">Cancel</button>
 					</form>
 				</div>
 			  </div>
 			</div>
+<!-- HWPump config -->
+		<div>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">Hot Water Pump</h3>
+				</div>
+				<div class="panel-body">
+					<form id="form_hwpump" method="POST">
+						<div class="form-group">
+							<label for="start_minutes">Start time, minutes from 0:00</label>
+							<input type="number" required class="form-control" min="0" max="1439" step="1" id="start_minutes" name="start_minutes">
+						</div>
+						<div class="form-group">
+							<label for="stop_minutes">Stop time, minutes from 0:00</label>
+							<input type="number" required class="form-control" min="0" max="1439" step="1" id="stop_minutes" name="stop_minutes">
+						</div>
+						<div class="form-group">
+							<label for="cycle_duration">Cycle duration, minutes</label>
+							<input type="number" required class="form-control" min="1" max="60" step="1" id="cycle_duration" name="cycle_duration">
+						</div>
+						<div class="form-group">
+							<label for="cycle_interval">Cycle interval, minutes</label>
+							<input type="number" required class="form-control" min="5" max="1380" step="1" id="cycle_interval" name="cycle_interval">
+						</div>
+						<button type="submit" class="btn btn-success">Save settings</button>
+						<button type="button" id="hwpump_cancel" class="btn btn-link">Cancel</button>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		<div>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">Date Time</h3>
+				</div>
+				<div class="panel-body">
+					<button type="button" id="sync_datetime" class="btn btn-success">Sync Date Time</button>
+				</div>
+			</div>
+		</div>
+		
 		</div>
       </div>
 
-    </div> <!-- /container -->
+	</div> <!-- /container -->
   </body>
 </html>
