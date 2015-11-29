@@ -1,5 +1,6 @@
 #include <user_config.h>
 #include <SmingCore/SmingCore.h>
+#include <Libraries/DS3232RTC/DS3232RTC.h>
 
 #include <configuration.h>
 #include <heatcontrol.h>
@@ -105,6 +106,31 @@ void onAJAXGetState(HttpRequest &request, HttpResponse &response)
 	response.sendJsonObject(stream);
 }
 
+void onAJAXDateTime(HttpRequest &request, HttpResponse &response)
+{
+TimeElements tm;
+	if (request.getRequestMethod() == RequestMethod::POST)
+	{
+		if (request.getPostParameter("time_zone").length() > 0)
+		{
+			ActiveConfig.time_zone = request.getPostParameter("time_zone").toInt();
+			saveConfig(ActiveConfig);
+
+			SystemClock.setTimeZone(ActiveConfig.time_zone);
+
+			tm.Second = request.getPostParameter("Second").toInt();
+			tm.Minute = request.getPostParameter("Minute").toInt();
+			tm.Hour = request.getPostParameter("Hour").toInt();
+			tm.Wday = request.getPostParameter("Wday").toInt();
+			tm.Day = request.getPostParameter("Day").toInt();
+			tm.Month = request.getPostParameter("Month").toInt();
+			tm.Year = CalendarYrToTm(request.getPostParameter("Year").toInt());
+
+			DSRTC.set(makeTime(tm));
+			SystemClock.setTime(DSRTC.get(), eTZ_UTC);
+		}
+	}
+}
 
 void startWebServer()
 {
@@ -115,6 +141,7 @@ void startWebServer()
 	server.addPath("/config", onConfiguration);
 	server.addPath("/config.json", onConfiguration_json);
 	server.addPath("/state", onAJAXGetState);
+	server.addPath("/datetime", onAJAXDateTime);
 	server.setDefaultHandler(onFile);
 	serverStarted = true;
 

@@ -20,6 +20,7 @@ struct HeatConfig
 		stop_minutes = 1380; // minutes since 0:00 to stop WHPump cycles
 		cycle_duration = 5; // Duration of pump stay turning on in minutes
 		cycle_interval = 60; // Interval of turning HWPump On for a while in minutes
+		time_zone = 2; // Time zone offset from GMT
 
 	}
 
@@ -37,6 +38,7 @@ struct HeatConfig
 	uint16_t stop_minutes;
 	uint8_t cycle_duration;
 	uint8_t cycle_interval;
+	uint8_t time_zone;
 
 };
 

@@ -15,7 +15,7 @@ Timer SPITimer;
 Timer HSystemTimer;
 
 String _date_time_str = "";
-double sys_TZ = 3;
+//double sys_TZ = 3;
 
 bool web_ap_started = false;
 
@@ -66,7 +66,7 @@ void init()
     Wire.begin();
 
     //Initial setup & sync from DSRTC system clock
-    SystemClock.setTimeZone(sys_TZ);
+    SystemClock.setTimeZone(ActiveConfig.time_zone);
     SystemClock.setTime(DSRTC.get(), eTZ_UTC);
 
     // Start initial HWPump cycle

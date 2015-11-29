@@ -43,6 +43,26 @@ function post_hwpump(event) {
     })
 }
 
+function post_datetime(event) {
+	event.preventDefault();
+	d = new Date()
+	var formData = {
+			'time_zone'				:	Math.abs(d.getTimezoneOffset()/60),
+			'Second'				:	d.getUTCSeconds(),
+			'Minute'				:	d.getUTCMinutes(),
+			'Hour'					:	d.getUTCHours(),
+			'Wday'					:	d.getUTCDay(),
+			'Day'					:	d.getUTCDate(),
+			'Month'					:	d.getUTCMonth(),
+			'Year'					:	d.getUTCFullYear()
+			};
+	$.ajax({
+        type        : 'POST',
+        url         : '/datetime',
+        data        : formData
+    })
+}
+
 $( document ).ready(function() {
 	get_config();
 	
@@ -50,4 +70,5 @@ $( document ).ready(function() {
 	document.getElementById('settings_cancel').addEventListener('click', get_config);
 	document.getElementById('form_hwpump').addEventListener('submit', post_hwpump);
 	document.getElementById('hwpump_cancel').addEventListener('click', get_config);
+	document.getElementById('sync_datetime').addEventListener('click', post_datetime);
 });
