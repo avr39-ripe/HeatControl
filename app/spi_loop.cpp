@@ -4,11 +4,45 @@
 
 #include <SmingCore/SPI.h>
 
+
+
 uint8_t out_reg[num_reg] = {255,255};
 //uint8_t out_reg_am[num_reg] = {255,255}; //TODO: for tests 1 and 2 channels made active HIGH for SSD RELAY (ALWAYS ACTIVE LOW)
 uint8_t in_reg[num_reg];
 uint8_t in_reg_prev[num_reg] = {255,255};
 
+#ifdef MCP23S17 //use MCP23S17 SPI_loop
+void SPI_loop()
+{
+	uint16_t inupt_reg_val;
+	uint16_t output_reg_val;
+
+	counter++;
+// Read data from MCP23S17
+//	inupt_reg_val = inputchip.digitalRead();
+//	in_reg[0] = inupt_reg_val && 0xFF;
+//	in_reg[1] = ((inupt_reg_val >> 8) && 0xFF);
+	in_reg[0] = inputchip.byteRead(GPIOB);
+	in_reg[1] = inputchip.byteRead(GPIOA);
+// Write data to MCP23S17
+//	output_reg_val = out_reg[0];
+//	output_reg_val |= (out_reg[1] << 8);
+//	outputchip.digitalWrite(output_reg_val);
+	outputchip.byteWrite(GPIOB, out_reg[0]);
+	outputchip.byteWrite(GPIOA, out_reg[1]);
+//	  for(int i = 0; i < num_reg; i++)
+//	  {
+//	    Serial.print("REG-IN"); Serial.print(i);Serial.print(" ");
+//	    print_byte(in_reg[i]);
+//	    Serial.print("REG-OUT"); Serial.print(i);Serial.print(" ");
+//	    print_byte(out_reg[i]);
+//	  }
+//	outputchip.digitalWrite(inputchip.digitalRead());
+
+}
+#endif
+
+#ifndef MCP23S17 //use MCP23S17 SPI_loop
 void SPI_loop()
 {
 	counter++;
@@ -77,6 +111,7 @@ void SPI_loop()
 //		}
 //    }
 }
+#endif
 
 bool getState(uint8_t * reg, int ch, uint8_t active_mode)
 {
