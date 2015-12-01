@@ -212,7 +212,7 @@ HeatingSystem::HeatingSystem(uint8_t mode_pin, uint8_t caldron_pin)
 	this->_temp_accum = 0;
 	this->_temp_counter =0;
 	//hwpump init
-	this->_hwpump = new HWPump(15);
+	this->_hwpump = new HWPump(12);
 	this->_hwpump->_cycle_interval = 60; // in minutes
 	this->_hwpump->_cycle_duration = 5; // in minutes
 	this->_hwpump->_start_minutes = 420; // 7 * 60 = 7:00
@@ -221,8 +221,8 @@ HeatingSystem::HeatingSystem(uint8_t mode_pin, uint8_t caldron_pin)
 //	this->_hwpump->cycle();
 
 	//pumps init
-	this->_pumps[0] = new Pump(10);
-	this->_pumps[1] = new Pump(11);
+	this->_pumps[0] = new Pump(14); //HIGH_TEMP
+	this->_pumps[1] = new Pump(13); //LOW_TEMP
 	//rooms init
 	for(uint8_t room_id = 0; room_id < numRooms; room_id++)
 	{
@@ -230,19 +230,31 @@ HeatingSystem::HeatingSystem(uint8_t mode_pin, uint8_t caldron_pin)
 	}
 	//assign each room corresponding TUs
 	this->_rooms[0]->_terminal_units[HIGH_TEMP] = new TerminalUnit(0, PUMP_1, this);
-	this->_rooms[0]->_terminal_units[LOW_TEMP] = new TerminalUnit(1, PUMP_2, this);
+	this->_rooms[0]->_terminal_units[LOW_TEMP] = new TerminalUnit(8, PUMP_2, this);
 
-	this->_rooms[1]->_terminal_units[HIGH_TEMP] = new TerminalUnit(2, PUMP_1, this);
-	this->_rooms[1]->_terminal_units[LOW_TEMP] = new TerminalUnit(3, PUMP_2, this);
+	this->_rooms[1]->_terminal_units[HIGH_TEMP] = new TerminalUnit(1, PUMP_1, this);
+	this->_rooms[1]->_terminal_units[LOW_TEMP] = new TerminalUnit(9, PUMP_2, this);
 
-	this->_rooms[2]->_terminal_units[HIGH_TEMP] = new TerminalUnit(4, PUMP_1, this);
+	this->_rooms[2]->_terminal_units[HIGH_TEMP] = new TerminalUnit(2, PUMP_1, this);
 	this->_rooms[2]->_terminal_units[LOW_TEMP] = nullptr;
 
-	this->_rooms[3]->_terminal_units[HIGH_TEMP] = nullptr;
-	this->_rooms[3]->_terminal_units[LOW_TEMP] = new TerminalUnit(5, PUMP_2, this);
+	this->_rooms[3]->_terminal_units[HIGH_TEMP] = new TerminalUnit(3, PUMP_1, this);;
+	this->_rooms[3]->_terminal_units[LOW_TEMP] = new TerminalUnit(10, PUMP_2, this);
 
-	this->_rooms[4]->_terminal_units[HIGH_TEMP] = new TerminalUnit(6, PUMP_1, this);
-	this->_rooms[4]->_terminal_units[LOW_TEMP] = new TerminalUnit(7, PUMP_2, this);
+	this->_rooms[4]->_terminal_units[HIGH_TEMP] = nullptr;
+	this->_rooms[4]->_terminal_units[LOW_TEMP] = new TerminalUnit(11, PUMP_2, this);
+
+	this->_rooms[5]->_terminal_units[HIGH_TEMP] = new TerminalUnit(4, PUMP_1, this);
+	this->_rooms[5]->_terminal_units[LOW_TEMP] = nullptr;
+
+	this->_rooms[6]->_terminal_units[HIGH_TEMP] = new TerminalUnit(5, PUMP_1, this);
+	this->_rooms[6]->_terminal_units[LOW_TEMP] = nullptr;
+
+	this->_rooms[7]->_terminal_units[HIGH_TEMP] = new TerminalUnit(6, PUMP_1, this);
+	this->_rooms[7]->_terminal_units[LOW_TEMP] = nullptr;
+
+	this->_rooms[8]->_terminal_units[HIGH_TEMP] = new TerminalUnit(7, PUMP_1, this);
+	this->_rooms[8]->_terminal_units[LOW_TEMP] = nullptr;
 
 	//Turn everything OFF
 	for (auto room: _rooms)
@@ -448,4 +460,4 @@ void HeatingSystem::_temp_read()
 }
 
 //HeatingSystem initialisation
-HeatingSystem HSystem(8, 9);
+HeatingSystem HSystem(9, 15);

@@ -4,32 +4,43 @@ esp8266
 4 - OneWire thermometer
 5 - FREE PIN
 12,13,14 - SPI
-15 - reg_in_latch of 74hc165
-16 - reg_out_latch of 74hc959
+15 - FREE PIN
+16 - MCP23S17 CS PIN
 
-Shift-out 74hc595
+IN PINS on MCP23S17 - chip 0x010
 
-9 - Caldron
-10 - PUMP_1
-11 - PUMP_2
+0 - Badroom thermostat
+1 - Hallway thermostat
+2 - WC - thermostat
+3 - Hall thermostat
+4 - Kitchen
+5 - Room 1 with fireplace thermostat
+6 - Room 2 thermostat
+7 - Room 3 Badroom thermostat
+8 - Room 4 Hall thermostat
+9 - Outside temperature thermostat
+10 - FREE
+11 - FREE
+12 - FREE
+13 - FREE
+14 - FREE
+15 - FREE
 
-0 - room 1
-1 - room 2
-2 - room 3
-3 - room 4
-4 - room 5
-5 - room 6
-6 - room 7
-7 - room 8
-8 - room 9
+OUT PINS on MCP23S17 - chip 0x000
 
-Shift-in 74hc165
-0 - room 1
-1 - room 2
-2 - room 3
-3 - room 4
-4 - room 5
-5 - room 6
-6 - room 7
-7 - room 8
-8 - room 9
+0 - Badroom HIGH_TEMP TU
+1 - Hallway HIGH_TEMP TU
+2 - WC HIGH_TEMP TU
+3 - Hall HIGH_TEMP TU
+4 - Room 1 with fireplace HIGH_TEMP TU
+5 - Room 2 HIGH_TEMP TU
+6 - Room 3 Badroom HIGH_TEMP TU
+7 - Room 4 Hall HIGH_TEMP TU
+8 - Badroom LOW_TEMP TU
+9 - Hallway LOW_TEMP TU
+10 - Hall LOW_TEMP TU
+11 - Kitchen LOW_TEMP TU
+12 - Hot Water Pump
+13 - LOW_TEMP Pump PUMP_2
+14 - HIGH_TEMP Pump PUMP_1
+15 - Caldron jumper
