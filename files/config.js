@@ -3,6 +3,11 @@ function get_config() {
 			function(data) {
 				$.each(data, function(key, value){
             		document.getElementById(key).value = value;
+            	if (data.sta_enable == 1) {
+            		document.getElementById('sta_enable').checked = true;
+            	}
+            	else
+            		document.getElementById('sta_enable').checked = false;
         		});
             });
 }
@@ -43,6 +48,20 @@ function post_hwpump(event) {
     })
 }
 
+function post_netcfg(event) {
+	event.preventDefault();
+	var formData = {
+			'SSID'					:	document.getElementById('SSID').value,
+			'Password'				:	document.getElementById('Password').value,
+			'sta_enable'			:	(document.getElementById('sta_enable').checked ? 1 : 0)
+			};
+	$.ajax({
+        type        : 'POST',
+        url         : '/config',
+        data        : formData
+    })
+}
+
 function post_datetime(event) {
 	event.preventDefault();
 	d = new Date()
@@ -66,6 +85,8 @@ function post_datetime(event) {
 $( document ).ready(function() {
 	get_config();
 	
+	document.getElementById('form_netcfg').addEventListener('submit', post_netcfg);
+	document.getElementById('netcfg_cancel').addEventListener('click', get_config);
 	document.getElementById('form_settings').addEventListener('submit', post_config);
 	document.getElementById('settings_cancel').addEventListener('click', get_config);
 	document.getElementById('form_hwpump').addEventListener('submit', post_hwpump);

@@ -10,6 +10,7 @@ struct HeatConfig
 {
 	HeatConfig()
 	{
+		sta_enable = 1; //Enable WIFI Client
 		mode_switch_temp = 60; //C degree
 		mode_switch_temp_delta = 1; //C dgree
 		pump_on_delay = 10; //seconds
@@ -26,6 +27,7 @@ struct HeatConfig
 
 	String NetworkSSID;
 	String NetworkPassword;
+	uint8_t sta_enable;
 
 // HeatControl settings
 	float mode_switch_temp;

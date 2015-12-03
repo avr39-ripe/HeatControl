@@ -18,6 +18,7 @@ HeatConfig loadConfig()
 		JsonObject& network = root["network"];
 		cfg.NetworkSSID = String((const char*)network["ssid"]);
 		cfg.NetworkPassword = String((const char*)network["password"]);
+		cfg.sta_enable = network["sta_enable"];
 
 		JsonObject& settings = root["settings"];
 		cfg.mode_switch_temp = settings["mode_switch_temp"];
@@ -54,6 +55,7 @@ void saveConfig(HeatConfig& cfg)
 	root["network"] = network;
 	network["ssid"] = cfg.NetworkSSID.c_str();
 	network["password"] = cfg.NetworkPassword.c_str();
+	network["sta_enable"] = cfg.sta_enable;
 
 	JsonObject& settings = jsonBuffer.createObject();
 	root["settings"] = settings;

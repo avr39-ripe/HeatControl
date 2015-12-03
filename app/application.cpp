@@ -47,14 +47,17 @@ void init()
 	wifi_set_sleep_type(NONE_SLEEP_T);
 
 	ActiveConfig = loadConfig();
-//	ActiveConfig.NetworkSSID = WIFI_SSID;
-//	ActiveConfig.NetworkPassword = WIFI_PWD;
 
-	WifiStation.config(ActiveConfig.NetworkSSID, ActiveConfig.NetworkPassword);
-	WifiStation.enable(true);
-//	WifiAccessPoint.enable(false);
-
-	WifiStation.waitConnection(connectOk, 20, connectFail); // We recommend 20+ seconds for connection timeout at start
+	if (ActiveConfig.sta_enable == 1)
+	{
+		WifiStation.config(ActiveConfig.NetworkSSID, ActiveConfig.NetworkPassword);
+		WifiStation.enable(true);
+		WifiStation.waitConnection(connectOk, 20, connectFail); // We recommend 20+ seconds for connection timeout at start
+	}
+	else
+	{
+		WifiStation.enable(false);
+	}
 //	wifi_set_phy_mode(PHY_MODE_11G);
 	WifiAccessPoint.config("HeatConfig", "", AUTH_OPEN);
 	WifiAccessPoint.enable(true);
