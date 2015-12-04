@@ -59,7 +59,7 @@ void init()
 		WifiStation.enable(false);
 	}
 //	wifi_set_phy_mode(PHY_MODE_11G);
-	WifiAccessPoint.config("HeatConfig", "", AUTH_OPEN);
+	WifiAccessPoint.config("HeatConfig", "20040229", AUTH_WPA2_PSK);
 	WifiAccessPoint.enable(true);
 	startWebServer();
 
@@ -110,7 +110,7 @@ void connectOk()
 	if(! web_ap_started)
 	{
 		web_ap_started = true;
-		WifiAccessPoint.config("HeatConfig", "", AUTH_OPEN);
+		WifiAccessPoint.config("HeatConfig", "20040229", AUTH_WPA2_PSK);
 		WifiAccessPoint.enable(false);
 //		startWebServer();
 //		procTimer.restart();
@@ -124,7 +124,7 @@ void connectFail()
 	if(! web_ap_started)
 	{
 		web_ap_started = true;
-		WifiAccessPoint.config("HeatConfig", "", AUTH_OPEN);
+		WifiAccessPoint.config("HeatConfig", "20040229", AUTH_WPA2_PSK);
 		WifiAccessPoint.enable(true);
 		startWebServer();
 	}
