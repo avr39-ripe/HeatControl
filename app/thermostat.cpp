@@ -229,31 +229,31 @@ HeatingSystem::HeatingSystem(uint8_t mode_pin, uint8_t caldron_pin)
 		this->_rooms[room_id] = new Room(room_id, this);
 	}
 	//assign each room corresponding TUs
-	this->_rooms[0]->_terminal_units[HIGH_TEMP] = new TerminalUnit(0, PUMP_1, this);
+	this->_rooms[0]->_terminal_units[HIGH_TEMP] = new TerminalUnit(0, PUMP_1, this); // Badroom
 	this->_rooms[0]->_terminal_units[LOW_TEMP] = new TerminalUnit(8, PUMP_2, this);
 
-	this->_rooms[1]->_terminal_units[HIGH_TEMP] = new TerminalUnit(1, PUMP_1, this);
+	this->_rooms[1]->_terminal_units[HIGH_TEMP] = new TerminalUnit(1, PUMP_1, this); // Hallway
 	this->_rooms[1]->_terminal_units[LOW_TEMP] = new TerminalUnit(9, PUMP_2, this);
 
-	this->_rooms[2]->_terminal_units[HIGH_TEMP] = new TerminalUnit(2, PUMP_1, this);
+	this->_rooms[2]->_terminal_units[HIGH_TEMP] = new TerminalUnit(2, PUMP_1, this); // WC
 	this->_rooms[2]->_terminal_units[LOW_TEMP] = nullptr;
 
-	this->_rooms[3]->_terminal_units[HIGH_TEMP] = new TerminalUnit(3, PUMP_1, this);;
+	this->_rooms[3]->_terminal_units[HIGH_TEMP] = new TerminalUnit(3, PUMP_1, this); // Hall
 	this->_rooms[3]->_terminal_units[LOW_TEMP] = new TerminalUnit(10, PUMP_2, this);
 
 	this->_rooms[4]->_terminal_units[HIGH_TEMP] = nullptr;
-	this->_rooms[4]->_terminal_units[LOW_TEMP] = new TerminalUnit(11, PUMP_2, this);
+	this->_rooms[4]->_terminal_units[LOW_TEMP] = new TerminalUnit(11, PUMP_2, this); // Kitchen
 
-	this->_rooms[5]->_terminal_units[HIGH_TEMP] = new TerminalUnit(4, PUMP_1, this);
+	this->_rooms[5]->_terminal_units[HIGH_TEMP] = new TerminalUnit(4, PUMP_1, this); // Room 1 with fireplace
 	this->_rooms[5]->_terminal_units[LOW_TEMP] = nullptr;
 
-	this->_rooms[6]->_terminal_units[HIGH_TEMP] = new TerminalUnit(5, PUMP_1, this);
+	this->_rooms[6]->_terminal_units[HIGH_TEMP] = new TerminalUnit(5, PUMP_1, this); // Room 2
 	this->_rooms[6]->_terminal_units[LOW_TEMP] = nullptr;
 
-	this->_rooms[7]->_terminal_units[HIGH_TEMP] = new TerminalUnit(6, PUMP_1, this);
+	this->_rooms[7]->_terminal_units[HIGH_TEMP] = new TerminalUnit(6, PUMP_1, this); // Room 3 Badroom
 	this->_rooms[7]->_terminal_units[LOW_TEMP] = nullptr;
 
-	this->_rooms[8]->_terminal_units[HIGH_TEMP] = new TerminalUnit(7, PUMP_1, this);
+	this->_rooms[8]->_terminal_units[HIGH_TEMP] = new TerminalUnit(7, PUMP_1, this); // Room 4 Hall
 	this->_rooms[8]->_terminal_units[LOW_TEMP] = nullptr;
 
 	//Turn everything OFF
