@@ -4,7 +4,7 @@
 //TODO: HACK! Need to be replaced by Time.h from recent arduino!!
 //#include <Libraries/DS3232RTC/DS3232RTC.h>
 
-const uint8_t numRooms = 5;
+const uint8_t numRooms = 9;
 const uint16_t defaultDelay = 15; //4 * 60 - 4 minutes
 const uint8_t temp_reads = 5;
 

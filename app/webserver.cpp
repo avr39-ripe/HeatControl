@@ -27,6 +27,18 @@ void onConfiguration(HttpRequest &request, HttpResponse &response)
 		{
 			ActiveConfig.NetworkSSID = request.getPostParameter("SSID");
 			ActiveConfig.NetworkPassword = request.getPostParameter("Password");
+			ActiveConfig.sta_enable = request.getPostParameter("sta_enable").toInt();
+
+			if (ActiveConfig.sta_enable == 1)
+			{
+				WifiStation.config(ActiveConfig.NetworkSSID, ActiveConfig.NetworkPassword);
+				WifiStation.enable(true);
+			}
+			else
+			{
+				WifiStation.enable(false);
+			}
+
 		}
 		if (request.getPostParameter("mode_switch_temp").length() > 0) // Settings
 		{
@@ -63,6 +75,7 @@ void onConfiguration_json(HttpRequest &request, HttpResponse &response)
 
 	json["SSID"] = ActiveConfig.NetworkSSID;
 	json["Password"] = ActiveConfig.NetworkPassword;
+	json["sta_enable"] = ActiveConfig.sta_enable;
 
 	json["mode_switch_temp"] = ActiveConfig.mode_switch_temp;
 	json["mode_switch_temp_delta"] = ActiveConfig.mode_switch_temp_delta;
@@ -123,7 +136,7 @@ TimeElements tm;
 			tm.Hour = request.getPostParameter("Hour").toInt();
 			tm.Wday = request.getPostParameter("Wday").toInt();
 			tm.Day = request.getPostParameter("Day").toInt();
-			tm.Month = request.getPostParameter("Month").toInt();
+			tm.Month = request.getPostParameter("Month").toInt() + 1; // JS Counts month from 0 and tm.elements from 1
 			tm.Year = CalendarYrToTm(request.getPostParameter("Year").toInt());
 
 			DSRTC.set(makeTime(tm));
