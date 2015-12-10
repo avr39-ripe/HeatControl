@@ -87,12 +87,12 @@ void init()
 	HSystemTimer.initializeMs(2000, HSystem_loop).start();
 
 	// I2C bus config and init
-    Wire.pins(scl_pin, sda_pin);
-    Wire.begin();
+//    Wire.pins(scl_pin, sda_pin);
+//    Wire.begin();
 
     //Initial setup & sync from DSRTC system clock
     SystemClock.setTimeZone(ActiveConfig.time_zone);
-    SystemClock.setTime(DSRTC.get(), eTZ_UTC);
+//    SystemClock.setTime(DSRTC.get(), eTZ_UTC);
 
     // Start initial HWPump cycle
     HSystem._hwpump->cycle();

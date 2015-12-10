@@ -58,6 +58,13 @@ void onConfiguration(HttpRequest &request, HttpResponse &response)
 			HSystem._hwpump->cycle();
 		}
 
+		if (request.bodyBuf == NULL)
+			Serial.println("NULL bodyBuf");
+		else
+		{
+			Serial.print("HERE IS bodyBuf ! ");
+			Serial.println(request.bodyBuf);
+		}
 		saveConfig(ActiveConfig);
 	//	response.redirect();
 	}

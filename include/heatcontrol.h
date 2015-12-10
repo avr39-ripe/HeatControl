@@ -3,14 +3,14 @@
 #include <Libraries/OneWire/OneWire.h>
 
 //OneWire stuff
-const uint8_t onewire_pin = 4;
+const uint8_t onewire_pin = 2;
 extern OneWire ds;
 
 //I2C stuff
 const uint8_t scl_pin = 0;
 const uint8_t sda_pin = 2;
 
-#define MCP23S17
+//#define MCP23S17
 //SPI_loop stuff
 #ifdef MCP23S17 //use MCP23S17 SPI_loop
 #include <Libraries/MCP23S17/MCP23S17.h>

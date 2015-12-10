@@ -20,11 +20,7 @@ function post_config(event) {
 			'pump_on_delay'				:	document.getElementById('pump_on_delay').value,
 			'pump_off_delay'			:	document.getElementById('pump_off_delay').value,
 			'caldron_on_delay'			:	document.getElementById('caldron_on_delay').value,
-			'room_off_delay'			:	document.getElementById('room_off_delay').value,
-			'start_minutes'				:	document.getElementById('start_minutes').value,
-			'stop_minutes'				:	document.getElementById('stop_minutes').value,
-			'cycle_duration'			:	document.getElementById('cycle_duration').value,
-			'cycle_interval'			:	document.getElementById('cycle_interval').value
+			'room_off_delay'			:	document.getElementById('room_off_delay').value
 			};
 	$.ajax({
         type        : 'POST',
