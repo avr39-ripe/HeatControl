@@ -58,12 +58,15 @@ void onConfiguration(HttpRequest &request, HttpResponse &response)
 			HSystem._hwpump->cycle();
 		}
 
-		if (request.bodyBuf == NULL)
+		if (request.getBody() == NULL)
 			Serial.println("NULL bodyBuf");
 		else
 		{
 			Serial.print("HERE IS bodyBuf ! ");
-			Serial.println(request.bodyBuf);
+			Serial.println(request.getBody());
+			DynamicJsonBuffer jsonBuffer;
+			JsonObject& root = jsonBuffer.parseObject(request.getBody());
+			root.prettyPrintTo(Serial);
 		}
 		saveConfig(ActiveConfig);
 	//	response.redirect();
