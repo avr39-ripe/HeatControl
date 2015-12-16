@@ -64,9 +64,19 @@ void onConfiguration(HttpRequest &request, HttpResponse &response)
 		{
 			Serial.print("HERE IS bodyBuf ! ");
 			Serial.println(request.getBody());
-			DynamicJsonBuffer jsonBuffer;
+			StaticJsonBuffer<200> jsonBuffer;
 			JsonObject& root = jsonBuffer.parseObject(request.getBody());
 			root.prettyPrintTo(Serial);
+
+			if (root["start_minutes"].success()) // Settings
+			{
+				ActiveConfig.start_minutes = root["start_minutes"];
+				ActiveConfig.stop_minutes = root["stop_minutes"];
+				ActiveConfig.cycle_duration = root["cycle_duration"];
+				ActiveConfig.cycle_interval = root["cycle_interval"];
+
+				HSystem._hwpump->cycle();
+			}
 		}
 		saveConfig(ActiveConfig);
 	//	response.redirect();
