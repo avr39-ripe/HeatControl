@@ -22,14 +22,14 @@ void SPI_loop()
 //	inupt_reg_val = inputchip.digitalRead();
 //	in_reg[0] = inupt_reg_val && 0xFF;
 //	in_reg[1] = ((inupt_reg_val >> 8) && 0xFF);
-	in_reg[0] = inputchip.byteRead(GPIOB);
-	in_reg[1] = inputchip.byteRead(GPIOA);
+	in_reg[0] = inputchip.byteRead(MCP23S17Registers::GPIOB);
+	in_reg[1] = inputchip.byteRead(MCP23S17Registers::GPIOA);
 // Write data to MCP23S17
 //	output_reg_val = out_reg[0];
 //	output_reg_val |= (out_reg[1] << 8);
 //	outputchip.digitalWrite(output_reg_val);
-	outputchip.byteWrite(GPIOB, out_reg[0]);
-	outputchip.byteWrite(GPIOA, out_reg[1]);
+	outputchip.byteWrite(MCP23S17Registers::GPIOB, out_reg[0]);
+	outputchip.byteWrite(MCP23S17Registers::GPIOA, out_reg[1]);
 //	  for(int i = 0; i < num_reg; i++)
 //	  {
 //	    Serial.print("REG-IN"); Serial.print(i);Serial.print(" ");
