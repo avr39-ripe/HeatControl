@@ -4,9 +4,11 @@
 #include <user_config.h>
 #include <SmingCore/SmingCore.h>
 
-// Put you SSID and Password here
-const char WIFI_SSID[] = "infjust";
-const char WIFI_PWD[] = "jujust12";
+//Wifi Station mode SSID and PASSWORD
+#ifndef WIFI_SSID
+        #define WIFI_SSID "PleaseEnterSSID" // Put you Station mode SSID and Password here
+        #define WIFI_PWD "PleaseEnterPass"
+#endif
 
 const char HEAT_CONFIG_FILE[] = ".heat.conf"; // leading point for security reasons :)
 
