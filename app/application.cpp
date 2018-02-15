@@ -8,6 +8,11 @@
 
 #include "webserver.h"
 
+#ifdef GPIO_MCP23017 //use MCP23S17
+MCP23017* mcp000;
+MCP23017* mcp001;
+#endif
+
 Timer SPITimer;
 Timer HSystemTimer;
 
@@ -21,6 +26,7 @@ void HSystem_loop();
 
 void init()
 {
+	spiffs_mount();
 	Serial.begin(SERIAL_BAUD_RATE); // 115200 by default
 	Serial.systemDebugOutput(false); // Debug output to serial
 	Serial.commandProcessing(false);
@@ -31,7 +37,7 @@ void init()
 //	ActiveConfig.NetworkPassword = WIFI_PWD;
 
 //	WifiStation.config(ActiveConfig.NetworkSSID, ActiveConfig.NetworkPassword);
-//	WifiStation.enable(true);
+//	WifiStation.enable(false,true);
 //	WifiAccessPoint.enable(true);
 
 //	WifiStation.waitConnection(connectOk, 20, connectFail); // We recommend 20+ seconds for connection timeout at start
@@ -42,9 +48,24 @@ void init()
 	startWebServer();
 
 //SPI_loop init
+#ifdef GPIO_MCP23017
+	Wire.pins(14,13);
+	mcp000 = new MCP23017;
+	mcp000->begin(0x000);
+	mcp001 = new MCP23017;
+	mcp001->begin(0x001);
+
+	mcp000->pinMode(0xFF00); // Set PORTA to OUTPUT 0x00, PORTB to INPUT 0xFF
+	mcp000->pullupMode(0xFF00); // turn on internal pull-up for PORTB 0xFF
+	mcp000->digitalWrite(0x0000); //Set all PORTA to 0xFF for simple relay which is active LOW
+
+	mcp001->pinMode(0xFF00); // Set PORTA to OUTPUT 0x00, PORTB to INPUT 0xFF
+	mcp001->pullupMode(0xFF00); // turn on internal pull-up for PORTB 0xFF
+	mcp001->digitalWrite(0x0000); //Set all PORTA to 0xFF for simple relay which is active LOW
+#elif
 	pinMode(reg_in_latch, OUTPUT);
 	pinMode(reg_out_latch, OUTPUT);
-
+#endif
 	SPITimer.initializeMs(200, SPI_loop).start();
 
 //HSystem.check() timer

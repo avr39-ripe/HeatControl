@@ -12,70 +12,38 @@ uint8_t in_reg_prev[num_reg] = {255,255};
 void SPI_loop()
 {
 	counter++;
-//for(int cnt = 0; cnt < 4; cnt++)
-//{
-  uint8_t first_bit;
-  int regIndex;
-  int bitIndex;
-  
-  digitalWrite(reg_in_latch, LOW);
-  
-  delayMicroseconds(5);
-  
-  digitalWrite(reg_in_latch, HIGH);
-  
-  digitalWrite(reg_out_latch, LOW);
+	uint8_t first_bit;
+	int regIndex;
+	int bitIndex;
+#ifdef GPIO_MCP23017 //use MCP23017
+	mcp000->writeRegister(MCP23017_GPIOA, out_reg[0]);
+	mcp001->writeRegister(MCP23017_GPIOA, out_reg[1]);
+	in_reg[0] = mcp000->readRegister(MCP23017_GPIOB);
+	in_reg[1] = mcp001->readRegister(MCP23017_GPIOB);
+#elif
+	digitalWrite(reg_in_latch, LOW);
 
-  pinMode(miso_pin, INPUT); //workaround for 74hc165 "left shifted bit" bug
-  first_bit = digitalRead(miso_pin); //read and store very first bit of 74hc165 chain outside regular SPI.transfer
+	delayMicroseconds(5);
 
-  SPI.begin();
+	digitalWrite(reg_in_latch, HIGH);
 
-  for(int i = 0; i < num_reg; i++)
-  {
-    in_reg[i] = SPI.transfer(out_reg[num_reg - 1 - i]);
-  }
+	digitalWrite(reg_out_latch, LOW);
 
-  digitalWrite(reg_out_latch, HIGH);
+	pinMode(miso_pin, INPUT); //workaround for 74hc165 "left shifted bit" bug
+	first_bit = digitalRead(miso_pin); //read and store very first bit of 74hc165 chain outside regular SPI.transfer
 
-  in_reg[1] = (in_reg[1] >> 1) | ((in_reg[0] & 1) << 7); //re-arrange bits in place
-  in_reg[0] = (in_reg[0] >> 1) | (first_bit << 7); //here we use our stored first bit
+	SPI.begin();
 
-//  for(int i = 0; i < num_reg; i++)
-//  {
-//    Serial.print("REG-IN"); Serial.print(i);Serial.print(" ");
-//    print_byte(in_reg[i]);
-//    Serial.print("REG-OUT"); Serial.print(i);Serial.print(" ");
-//    print_byte(out_reg[i]);
-//  }
+	for(int i = 0; i < num_reg; i++)
+	{
+	in_reg[i] = SPI.transfer(out_reg[num_reg - 1 - i]);
+	}
 
-//    for(int i = 0; i < num_ch; i++)
-//    {
-//    	int curr_state = pinState(i);
-//    	if (curr_state & JUSTPRESSED)
-//    	{
-//    		setState(out_reg, i, !getState(out_reg,i));
-//    		Serial.print("ON ch "); Serial.println(i);
-//    	}
-//
-//    	if (curr_state & JUSTRELEASED)
-//		{
-//			Serial.print("OFF ch "); Serial.println(i);
-//		}
-//    	if ((getState(in_reg,i) && (getState(in_reg_prev, i) == false)))
-//    	{
-//    		setState(in_reg_prev, i, true);
-//    		setState(out_reg, i, !getState(out_reg,i));
-//    		Serial.print("On ch "); Serial.println(i);
-//    	}
-//
-//    	if (((getState(in_reg,i) == false) && (getState(in_reg_prev, i))))
-//		{
-//			setState(in_reg_prev, i, false);
-//			//setState(out_reg, i, false);
-//			Serial.print("Off ch "); Serial.println(i);
-//		}
-//    }
+	digitalWrite(reg_out_latch, HIGH);
+
+	in_reg[1] = (in_reg[1] >> 1) | ((in_reg[0] & 1) << 7); //re-arrange bits in place
+	in_reg[0] = (in_reg[0] >> 1) | (first_bit << 7); //here we use our stored first bit
+#endif
 }
 
 bool getState(uint8_t * reg, int ch, uint8_t active_mode)

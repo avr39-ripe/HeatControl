@@ -1,12 +1,19 @@
 #ifndef INCLUDE_HEATCONTROL_H_
 #define INCLUDE_HEATCONTROL_H_
+#include <SmingCore/SmingCore.h>
 #include <Libraries/OneWire/OneWire.h>
 
+#define GPIO_MCP23017
+#ifdef GPIO_MCP23017 //use MCP23017
+#include <Libraries/MCP23017/MCP23017.h>
+extern MCP23017* mcp000;
+extern MCP23017* mcp001;
+#elif
 //SPI_loop stuff
 const int miso_pin = 12; // 74hc165 data out
-
 const byte reg_in_latch = 4;
 const byte reg_out_latch = 5;
+#endif
 
 const byte num_ch = 16;
 const byte num_reg = num_ch / 8;
