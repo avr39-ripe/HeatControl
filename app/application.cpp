@@ -1,5 +1,4 @@
-#include <user_config.h>
-#include <SmingCore/SmingCore.h>
+#include <SmingCore.h>
 #include <Libraries/OneWire/OneWire.h>
 
 #include <configuration.h> // application configuration
@@ -78,6 +77,20 @@ void HSystem_loop()
 	HSystem.check();
 }
 
+void _STAConnect(const String& ssid, MacAddress bssid, uint8_t channel)
+{
+	debugf("connected");
+	//	WifiAccessPoint.enable(false);
+		if(! web_ap_started)
+		{
+			web_ap_started = true;
+			WifiAccessPoint.config("HeatConfig", "", AUTH_OPEN);
+			WifiAccessPoint.enable(false);
+	//		startWebServer();
+	//		procTimer.restart();
+		}
+}
+
 void connectOk()
 {
 	debugf("connected");
@@ -104,5 +117,7 @@ void connectFail()
 		startWebServer();
 	}
 
-	WifiStation.waitConnection(connectOk); // Wait connection
+//	WifiStation.waitConnection(connectOk); // Wait connection
+	WifiEvents.onStationConnect(_STAConnect);
+
 }

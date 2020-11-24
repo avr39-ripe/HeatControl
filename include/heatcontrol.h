@@ -1,6 +1,6 @@
 #ifndef INCLUDE_HEATCONTROL_H_
 #define INCLUDE_HEATCONTROL_H_
-#include <SmingCore/SmingCore.h>
+#include <SmingCore.h>
 #include <Libraries/OneWire/OneWire.h>
 
 #define GPIO_MCP23017

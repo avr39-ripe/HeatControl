@@ -1,5 +1,4 @@
-#include <user_config.h>
-#include <SmingCore/SmingCore.h>
+#include <SmingCore.h>
 
 #include <configuration.h>
 #include <heatcontrol.h>
