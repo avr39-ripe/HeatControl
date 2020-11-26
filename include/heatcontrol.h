@@ -2,6 +2,7 @@
 #define INCLUDE_HEATCONTROL_H_
 #include <SmingCore.h>
 #include <Libraries/OneWire/OneWire.h>
+#include <JsonObjectStream.h>
 
 #define GPIO_MCP23017
 #ifdef GPIO_MCP23017 //use MCP23017

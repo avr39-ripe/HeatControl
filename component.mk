@@ -1,4 +1,4 @@
-ARDUINO_LIBRARIES :=  OneWire
+ARDUINO_LIBRARIES :=  OneWire ArduinoJson5
 
 SPI_SIZE		?= 4M
 

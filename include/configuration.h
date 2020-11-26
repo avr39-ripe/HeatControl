@@ -2,6 +2,7 @@
 #define INCLUDE_CONFIGURATION_H_
 
 #include <SmingCore.h>
+#include <JsonObjectStream.h>
 
 //Wifi Station mode SSID and PASSWORD
 #ifndef WIFI_SSID
