@@ -41,7 +41,7 @@ void setState(uint8_t * reg, int ch, uint8_t state, uint8_t active_mode = false)
 bool getState(uint8_t * reg, int ch, uint8_t active_mode = false);
 int pinState(int ch);
 void setOutState(int ch, uint8_t state);
-bool getOutState(int ch);
+void getOutState(int ch);
 
 //OneWire stuff
 const uint8_t ONEWIRE_PIN = 0;

@@ -1,4 +1,4 @@
-ARDUINO_LIBRARIES :=  OneWire ArduinoJson5
+ARDUINO_LIBRARIES :=  OneWire ArduinoJson5 MCP23017
 
 SPI_SIZE		?= 4M
 

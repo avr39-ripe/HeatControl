@@ -14,13 +14,13 @@ void onIndex(HttpRequest &request, HttpResponse &response)
 	auto &vars = tmpl->variables();
 	vars["Counter"] = String(counter);
 	vars["mode_temp"] = String(HSystem._mode_curr_temp);
-	response.sendTemplate(tmpl);
+	response.sendNamedStream(tmpl);
 }
 
 void onConfiguration(HttpRequest &request, HttpResponse &response)
 {
 //	ValveConfig cfg = loadConfig();
-	if (request.getRequestMethod() == RequestMethod::POST)
+	if (request.method == HTTP_POST)
 	{
 		debugf("Update config");
 		// Update config
@@ -52,7 +52,8 @@ void onConfiguration(HttpRequest &request, HttpResponse &response)
 		}
 
 		saveConfig(ActiveConfig);
-		response.redirect();
+		//response.redirect();
+		response.headers[HTTP_HEADER_LOCATION] = "/";
 	}
 
 	debugf("Send template");
@@ -65,17 +66,17 @@ void onConfiguration(HttpRequest &request, HttpResponse &response)
 	vars["p_off_d"] = String(ActiveConfig.pump_off_delay);
 	vars["c_on_d"] = String(ActiveConfig.caldron_on_delay);
 
-	response.sendTemplate(tmpl);
+	response.sendNamedStream(tmpl);
 }
 
 void onFile(HttpRequest &request, HttpResponse &response)
 {
-	String file = request.getPath();
+	String file = request.uri.getRelativePath();
 	if (file[0] == '/')
 		file = file.substring(1);
 
 	if (file[0] == '.')
-		response.forbidden();
+		response.code = HTTP_STATUS_FORBIDDEN;
 	else
 	{
 		response.setCache(86400, true); // It's important to use cache for better performance.
@@ -101,7 +102,8 @@ void onAJAXGetState(HttpRequest &request, HttpResponse &response)
 //		sensor["state"] = relay_pins[n].state;
 //	}
 //
-	response.sendJsonObject(stream);
+	//response.sendJsonObject(stream);
+	response.sendDataStream(stream, MIME_JSON);
 }
 
 
@@ -110,10 +112,10 @@ void startWebServer()
 	if (serverStarted) return;
 
 	server.listen(80);
-	server.addPath("/", onIndex);
-	server.addPath("/config", onConfiguration);
-	server.addPath("/state", onAJAXGetState);
-	server.setDefaultHandler(onFile);
+	server.paths.set("/", onIndex);
+	server.paths.set("/config", onConfiguration);
+	server.paths.set("/state", onAJAXGetState);
+	server.paths.setDefault(onFile);
 	serverStarted = true;
 
 	if (WifiStation.isEnabled())

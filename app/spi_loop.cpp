@@ -92,6 +92,8 @@ int pinState(int ch)
 	}
 	else if (getState(in_reg, ch) == false)
 		return (RELEASED);
+
+	return (RELEASED);
 }
 
 void setOutState(int ch, uint8_t state)
@@ -99,7 +101,7 @@ void setOutState(int ch, uint8_t state)
 	setState(out_reg, ch, state, false);
 }
 
-bool getOutState(int ch)
+void getOutState(int ch)
 {
 	getState(out_reg, ch, false);
 }
